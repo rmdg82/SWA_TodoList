@@ -1,0 +1,45 @@
+﻿@page "/"
+@page "/index"
+
+<PageTitle>Index</PageTitle>
+
+<MudContainer Class="mt-16">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">My first SWA!</MudText>
+    <MudText Align="Align.Center">Write your name below.</MudText>
+        <MudCard>
+            <MudCardContent>
+                <MudTextField T="string" Label="Name" @bind-Value="@MyName"/>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetMessage">Send</MudButton>
+            </MudCardContent>
+            <MudCardContent>
+                <MudText Typo="Typo.body1">@Response</MudText>
+            </MudCardContent>
+        </MudCard>
+</MudContainer>
+
+
+@*<h1>Hello, world!</h1>
+
+Welcome to your new app.*@
+
+
+@*<div class=card>
+    <div class=card-body>
+        <h5 class="card-title">
+            Write your name:
+        </h5>
+        <p class="card-text">
+            <div class="input-group-lg input-group mb-3">
+                <span class="input-group-text" >Name</span>
+                <input type="text" class="form-control" @bind="MyName"/>
+                <button type="button" class="btn btn-outline-secondary" @onclick="GetMessage">Send</button>
+            </div>
+            
+            <h2>@Response</h2>
+        </p>
+
+    </div>
+</div>*@
+
+
+
