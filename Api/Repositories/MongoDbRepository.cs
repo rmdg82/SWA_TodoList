@@ -1,5 +1,5 @@
 ﻿using Api.Models;
-using Microsoft.Azure.Cosmos;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,69 +8,66 @@ using System.Threading.Tasks;
 
 namespace Api.Repositories
 {
-    public class CosmosTodoRepository : ITodoRepository
+    public class MongoDbRepository : ITodoRepository
     {
-        private readonly Container _container;
+        private IMongoCollection<Todo> _todoCollection;
 
-        public CosmosTodoRepository(CosmosClient cosmosClient, string databaseId, string containerId)
+        public MongoDbRepository(MongoClient mongoClient, string databaseId, string collectionId)
         {
-            _container = cosmosClient.GetContainer(databaseId, containerId);
+            var database = mongoClient.GetDatabase(databaseId);
+            _todoCollection = database.GetCollection<Todo>(collectionId);
         }
 
         public async Task AddAsync(Todo todo)
         {
-            await _container.CreateItemAsync(todo, new PartitionKey(todo.Id));
+            if (todo is null)
+            {
+                throw new ArgumentNullException(nameof(todo));
+            }
+
+            await _todoCollection.InsertOneAsync(todo);
         }
 
         public async Task DeleteAsync(string todoId)
         {
-            await _container.DeleteItemAsync<Todo>(todoId, new PartitionKey(todoId));
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
+            await _todoCollection.DeleteOneAsync(x => x.Id == todoId);
         }
 
         public async Task<Todo> GetByIdAsync(string todoId)
         {
-            try
+            if (string.IsNullOrWhiteSpace(todoId))
             {
-                var response = await _container.ReadItemAsync<Todo>(todoId, new PartitionKey(todoId));
-                return response.Resource;
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
             }
-            catch (Exception)
-            {
-                return null;
-            }
+
+            return await _todoCollection.Find(x => x.Id == todoId).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery)
+        public Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery)
         {
-            var query = _container.GetItemQueryIterator<Todo>(new QueryDefinition(sqlQuery));
-
-            var result = new List<Todo>();
-            while (query.HasMoreResults)
-            {
-                var response = await query.ReadNextAsync();
-                result.AddRange(response.ToList());
-            }
-
-            return result;
+            throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Todo>> GetByQueryAsync(bool getOnlyUncompleted = false)
+        public async Task<IEnumerable<Todo>> GetByQueryAsync(bool getOnlyUncompleted = false)
         {
             if (getOnlyUncompleted)
             {
-                return GetByQueryAsync("SELECT * FROM c WHERE c.isCompleted=false");
+                return await _todoCollection.Find(x => x.IsCompleted == true).ToListAsync();
             }
-            else
-            {
-                return GetByQueryAsync("SELECT * FROM c");
-            }
+
+            return await _todoCollection.Find(x => true).ToListAsync();
         }
 
         public async Task<bool> InitializeCosmosDbDataIfEmpty()
         {
-            var todos = await GetByQueryAsync("SELECT * FROM c");
+            var todos = await _todoCollection.Find(x => true).ToListAsync();
 
-            if (todos is null || !todos.Any())
+            if (!todos.Any())
             {
                 var todosToAdd = new List<Todo>
                 {
@@ -94,10 +91,8 @@ namespace Api.Repositories
                     }
                 };
 
-                foreach (var todo in todosToAdd)
-                {
-                    await AddAsync(todo);
-                }
+                await _todoCollection.InsertManyAsync(todosToAdd);
+
                 return true;
             }
 
@@ -106,6 +101,11 @@ namespace Api.Repositories
 
         public async Task ToggleCompletionAsync(string todoId)
         {
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
             var todo = await GetByIdAsync(todoId);
             if (todo is null)
             {
@@ -114,24 +114,28 @@ namespace Api.Repositories
 
             todo.IsCompleted = !todo.IsCompleted;
 
-            await UpdateAsync(todoId, todo);
+            await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
         }
 
         public async Task UpdateAsync(string todoId, Todo todoUpdated)
         {
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
             if (todoUpdated is null)
             {
                 throw new ArgumentNullException(nameof(todoUpdated));
             }
 
             var todo = await GetByIdAsync(todoId);
-
             if (todo is null)
             {
                 throw new Exception($"Element with id [{todoId}] not found.");
             }
 
-            await _container.UpsertItemAsync(todoUpdated, new PartitionKey(todoId));
+            await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todoUpdated);
         }
     }
 }

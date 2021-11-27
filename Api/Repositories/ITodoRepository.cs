@@ -17,7 +17,7 @@ namespace Api.Repositories
 
         Task<Todo> GetByIdAsync(string todoId);
 
-        Task ToggleCompletionAsync(string todosId);
+        Task ToggleCompletionAsync(string todoId);
 
         Task AddAsync(Todo todo);
 

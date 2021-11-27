@@ -12,7 +12,7 @@ using Api.Models;
 using System.Collections.Generic;
 using System.Web;
 using System.Linq;
-using Api.Dtos;
+using Shared.Dtos;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using System.Net;
@@ -33,7 +33,7 @@ namespace Api
         }
 
         [FunctionName("InitializeDb")]
-        public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req)
+        public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "initDb")] HttpRequest req)
         {
             _logger.LogInformation("Initialize CosmosDb with fake data.");
             var result = await _todoRepository.InitializeCosmosDbDataIfEmpty();
