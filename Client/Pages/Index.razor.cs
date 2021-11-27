@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Client.HttpRepository;
+using Microsoft.AspNetCore.Components;
 using Shared;
+using Shared.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +13,13 @@ namespace Client.Pages
     public partial class Index
     {
         [Inject]
-        public HttpClient HttpClient { get; set; }
+        public ITodoHttpRepository TodoHttpRepository { get; set; }
 
-        public string? MyName { get; set; }
-        public string Response { get; set; } = "Nothing received so far ...";
+        public List<TodoDto> AllTodos { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            await GetMessage();
-        }
-
-        private async Task GetMessage()
-        {
-            Response = await HttpClient.GetStringAsync(Constants.API_DEFAULT_URL + $"?name={MyName}");
+            AllTodos = (await TodoHttpRepository.GetTodos()).ToList();
         }
     }
 }
