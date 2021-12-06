@@ -36,10 +36,10 @@ namespace Client.HttpRepository
         {
             if (onlyUncompleted)
             {
-                return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("todos?onlyUncompleted=true");
+                return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos?onlyUncompleted=true");
             }
 
-            return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("todos");
+            return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos");
         }
 
         public Task Toggle(string todoId)

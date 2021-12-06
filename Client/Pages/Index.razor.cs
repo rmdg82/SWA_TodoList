@@ -15,11 +15,11 @@ namespace Client.Pages
         [Inject]
         public ITodoHttpRepository TodoHttpRepository { get; set; }
 
-        public List<TodoDto> AllTodos { get; set; }
+        public IEnumerable<TodoDto> AllTodos { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            AllTodos = (await TodoHttpRepository.GetTodos()).ToList();
+            AllTodos = await TodoHttpRepository.GetTodos();
         }
     }
 }
