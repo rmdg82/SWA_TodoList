@@ -15,6 +15,9 @@ namespace Client.Pages
         [Inject]
         public ITodoHttpRepository TodoHttpRepository { get; set; }
 
+        [Inject]
+        public IConfiguration Configuration { get; set; }
+
         public IEnumerable<TodoDto> AllTodos { get; set; }
 
         protected override async Task OnInitializedAsync()
