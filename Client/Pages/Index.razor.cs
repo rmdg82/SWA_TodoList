@@ -20,9 +20,24 @@ namespace Client.Pages
 
         public IEnumerable<TodoDto> AllTodos { get; set; }
 
+        public string NewTodoText { get; set; } = string.Empty;
+
         protected override async Task OnInitializedAsync()
         {
-            AllTodos = await TodoHttpRepository.GetTodos();
+            await LoadAllTodos();
+        }
+
+        public async Task AddTodo()
+        {
+            var todoToAdd = new TodoDtoToAdd()
+            {
+                Text = NewTodoText,
+                IsCompleted = false
+            };
+
+            await TodoHttpRepository.AddTodo(todoToAdd);
+            await LoadAllTodos();
+            NewTodoText = string.Empty;
         }
 
         public async Task ResetDb()
@@ -30,6 +45,12 @@ namespace Client.Pages
             await TodoHttpRepository.ResetDb();
             AllTodos = await TodoHttpRepository.GetTodos();
 
+            StateHasChanged();
+        }
+
+        private async Task LoadAllTodos()
+        {
+            AllTodos = await TodoHttpRepository.GetTodos();
             StateHasChanged();
         }
     }

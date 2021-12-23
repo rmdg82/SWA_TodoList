@@ -18,9 +18,9 @@ namespace Client.HttpRepository
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public Task AddTodo(TodoDtoToAdd dtoToAdd)
+        public async Task AddTodo(TodoDtoToAdd dtoToAdd)
         {
-            throw new NotImplementedException();
+            await _httpClient.PostAsJsonAsync<TodoDtoToAdd>("/api/todos", dtoToAdd);
         }
 
         public Task DeleteTodo(string todoId)
