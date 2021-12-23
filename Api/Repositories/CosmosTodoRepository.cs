@@ -12,6 +12,28 @@ namespace Api.Repositories
     {
         private readonly Container _container;
 
+        private readonly List<Todo> _fakeTodos = new()
+        {
+            new Todo
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = "Wash the dishes",
+                IsCompleted = false
+            },
+            new Todo
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = "Clean the house",
+                IsCompleted = true
+            },
+            new Todo
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = "Mow the meadow",
+                IsCompleted = false
+            }
+        };
+
         public CosmosTodoRepository(CosmosClient cosmosClient, string databaseId, string containerId)
         {
             _container = cosmosClient.GetContainer(databaseId, containerId);
@@ -72,29 +94,7 @@ namespace Api.Repositories
 
             if (todos is null || !todos.Any())
             {
-                var todosToAdd = new List<Todo>
-                {
-                    new Todo
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "Wash the dishes",
-                        IsCompleted = false
-                    },
-                    new Todo
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "Clean the house",
-                        IsCompleted = true
-                    },
-                    new Todo
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "Mow the meadow",
-                        IsCompleted = false
-                    }
-                };
-
-                foreach (var todo in todosToAdd)
+                foreach (var todo in _fakeTodos)
                 {
                     await AddAsync(todo);
                 }
@@ -102,6 +102,21 @@ namespace Api.Repositories
             }
 
             return false;
+        }
+
+        public async Task ResetDb()
+        {
+            var allTodos = _container.GetItemLinqQueryable<Todo>();
+
+            foreach (var item in allTodos)
+            {
+                await _container.DeleteItemAsync<Todo>(item.Id, new PartitionKey(item.Id));
+            }
+
+            foreach (var todo in _fakeTodos)
+            {
+                await AddAsync(todo);
+            }
         }
 
         public async Task ToggleCompletionAsync(string todoId)

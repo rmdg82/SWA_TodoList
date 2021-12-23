@@ -24,5 +24,13 @@ namespace Client.Pages
         {
             AllTodos = await TodoHttpRepository.GetTodos();
         }
+
+        public async Task ResetDb()
+        {
+            await TodoHttpRepository.ResetDb();
+            AllTodos = await TodoHttpRepository.GetTodos();
+
+            StateHasChanged();
+        }
     }
 }

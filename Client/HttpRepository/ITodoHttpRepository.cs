@@ -9,6 +9,8 @@ namespace Client.HttpRepository
 {
     public interface ITodoHttpRepository
     {
+        Task<string> ResetDb();
+
         Task<IEnumerable<TodoDto>> GetTodos(bool onlyUncompleted = false);
 
         Task<TodoDto> GetTodo(string todoId);

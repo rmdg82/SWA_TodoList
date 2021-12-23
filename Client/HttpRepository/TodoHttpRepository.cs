@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,18 @@ namespace Client.HttpRepository
             }
 
             return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos");
+        }
+
+        public async Task<string> ResetDb()
+        {
+            var result = await _httpClient.PostAsync("/api/resetDb", null);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return "Db reset ok";
+            }
+
+            return "We got some problems";
         }
 
         public Task Toggle(string todoId)

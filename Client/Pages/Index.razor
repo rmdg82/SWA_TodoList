@@ -4,18 +4,17 @@
 <PageTitle>Index</PageTitle>
 
 <MudContainer Class="mt-16">
-    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">My first SWA!</MudText>
         <MudCard Elevation="3"> 
             <MudCardHeader>
                 <CardHeaderContent>
-                        <MudText Align="Align.Center" Typo="Typo.h4">Get all todos using @Configuration["Message"]</MudText>
+                    <MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary" >Todo list</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
             @if(AllTodos is null)
             {
-                <MudText Typo="Typo.h4" Align="Align.Center">
-                Nothing to show!</MudText>
+                <MudText Align="Align.Center" Typo="Typo.h5" Color="Color.Primary">Loading ...</MudText>
+                <MudProgressLinear  Color="Color.Primary" Indeterminate="true" Size="Size.Large" Class="my-7"/>
             }
             else
             {
@@ -29,6 +28,7 @@
                 }
 
             }
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ResetDb">Reset db</MudButton>
                 </MudCardContent>
     </MudCard>
 </MudContainer>

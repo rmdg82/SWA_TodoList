@@ -35,7 +35,7 @@ namespace Api
         [FunctionName("InitializeDb")]
         public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "initDb")] HttpRequest req)
         {
-            _logger.LogInformation("Initialize CosmosDb with fake data.");
+            _logger.LogInformation("Initialize Db with fake data.");
             var result = await _todoRepository.InitializeCosmosDbDataIfEmpty();
 
             if (result)
@@ -44,6 +44,15 @@ namespace Api
             }
 
             return new NoContentResult();
+        }
+
+        [FunctionName("ResetDb")]
+        public async Task<IActionResult> ResetDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "resetDb")] HttpRequest req)
+        {
+            _logger.LogInformation("Reset Db with fake data.");
+            await _todoRepository.ResetDb();
+
+            return new OkResult();
         }
 
         [FunctionName("GetAllTodos")]

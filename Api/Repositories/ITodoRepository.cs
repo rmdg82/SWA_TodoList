@@ -9,6 +9,8 @@ namespace Api.Repositories
 {
     public interface ITodoRepository
     {
+        Task ResetDb();
+
         Task<bool> InitializeCosmosDbDataIfEmpty();
 
         Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery);

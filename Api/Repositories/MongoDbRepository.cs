@@ -1,4 +1,5 @@
 ﻿using Api.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,29 @@ namespace Api.Repositories
 {
     public class MongoDbRepository : ITodoRepository
     {
-        private IMongoCollection<Todo> _todoCollection;
+        private readonly IMongoCollection<Todo> _todoCollection;
+
+        private readonly List<Todo> _fakeTodos = new()
+        {
+            new Todo
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = "Wash the dishes",
+                IsCompleted = false
+            },
+            new Todo
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = "Clean the house",
+                IsCompleted = true
+            },
+            new Todo
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = "Mow the meadow",
+                IsCompleted = false
+            }
+        };
 
         public MongoDbRepository(MongoClient mongoClient, string databaseId, string collectionId)
         {
@@ -69,34 +92,18 @@ namespace Api.Repositories
 
             if (!todos.Any())
             {
-                var todosToAdd = new List<Todo>
-                {
-                    new Todo
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "Wash the dishes",
-                        IsCompleted = false
-                    },
-                    new Todo
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "Clean the house",
-                        IsCompleted = true
-                    },
-                    new Todo
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Text = "Mow the meadow",
-                        IsCompleted = false
-                    }
-                };
-
-                await _todoCollection.InsertManyAsync(todosToAdd);
+                await _todoCollection.InsertManyAsync(_fakeTodos);
 
                 return true;
             }
 
             return false;
+        }
+
+        public async Task ResetDb()
+        {
+            await _todoCollection.DeleteManyAsync(Builders<Todo>.Filter.Empty);
+            await _todoCollection.InsertManyAsync(_fakeTodos);
         }
 
         public async Task ToggleCompletionAsync(string todoId)
