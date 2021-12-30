@@ -1,41 +1,102 @@
 ﻿@page "/"
 @page "/index"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Blazor - Todo List</PageTitle>
 
-<MudContainer Class="mt-16">
-        <MudCard Elevation="3"> 
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary" >Todo list</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-            @if(AllTodos is null)
-            {
-                <MudText Align="Align.Center" Typo="Typo.h4" Color="Color.Primary">Loading ...</MudText>
-                <MudProgressLinear  Color="Color.Primary" Indeterminate="true" Size="Size.Large" Class="my-7"/>
-            }
-            else
-            {
-                @foreach(var todo in AllTodos)
-                {
-                    <MudList>
-                        <MudListItem>
-                            <MudCheckBox @bind-Checked="todo.IsCompleted" Size="Size.Large">@todo.Text</MudCheckBox>
-                        </MudListItem>
-                    </MudList>
-                }
-            }
-            <MudList>
-                <MudListItem>
-                    <MudTextField @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo"></MudTextField>
-                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Sharp.AddCircle" Size="Size.Large" Color="Color.Success" OnClick="AddTodo">Add Todo</MudButton>
-                </MudListItem>
-            </MudList>
-            <MudButton Style="background-color: red; color: white; width: 250px; height: 60px; text-align:center" Variant="Variant.Filled" OnClick="ResetDb">Reset db</MudButton>
-            </MudCardContent>
-    </MudCard>
+<MudContainer Class="mt-16 mb-10">
+    <MudButton OnClick="ResetDb" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Reset Db</MudButton>
+    <MudGrid>
+        <!-- Add todo card -->
+        <MudItem xs="12">
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudGrid>
+                            <MudItem xs="1">
+                                <MudIcon Icon="@Icons.TwoTone.PlaylistAdd" Style="font-size: 4rem;" Color="Color.Primary"/> 
+                            </MudItem>
+                            <MudItem xs="11">
+                                <MudText Align="Align.Start" Typo="Typo.h3" Color="Color.Primary">Add Item</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.Middle" />
+                <MudCardContent>
+                    <MudTextField @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <!-- Todo list -->
+        <MudItem xs="12">
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudGrid>
+                            <MudItem xs="1">
+                                <MudIcon Icon="@Icons.TwoTone.Checklist" Style="font-size: 4rem;" Color="Color.Warning"/> 
+                            </MudItem>
+                            <MudItem xs="11">
+                                <MudText Align="Align.Start" Typo="Typo.h3" Color="Color.Warning">Todo list</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.Middle" />
+                <MudCardContent>
+                    @if(AllTodos is null)
+                    {
+                        <MudText Align="Align.Center" Typo="Typo.h4" Color="Color.Primary">Loading ...</MudText>
+                        <MudProgressLinear  Color="Color.Primary" Indeterminate="true" Size="Size.Large" Class="my-7"/>
+                    }
+                    else
+                    {
+                        @foreach(var todo in AllTodos)
+                        {
+                            @if (!todo.IsCompleted)
+                                {
+                                    <MudList Clickable="true" @bind-SelectedItem="SelectedTodo">
+                                        <MudListItem Class="" OnClick="ToggleTodo" Value="@todo.Id" Text="@todo.Text" Icon="@Icons.Filled.CheckBoxOutlineBlank" IconSize="Size.Large" IconColor="Color.Primary" />
+                                    </MudList>
+                                }
+                        }
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <!-- Completed -->
+        <MudItem xs="12">
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudGrid>
+                            <MudItem xs="1">
+                                <MudIcon Icon="@Icons.Filled.DoneOutline" Style="font-size: 4rem;" Color="Color.Success"/> 
+                            </MudItem>
+                            <MudItem xs="11">
+                                <MudText Align="Align.Start" Typo="Typo.h3" Color="Color.Success">Completed</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.Middle" />
+                <MudCardContent>
+                    @if(AllTodos is not null)
+                    {
+                        @foreach(var todo in AllTodos)
+                        {
+                            @if (todo.IsCompleted)
+                            {
+                                <MudList>
+                                    <MudListItem Text="@todo.Text" IconSize="Size.Large" Icon="@Icons.Filled.CheckCircle" IconColor="Color.Success" />
+                                </MudList>
+                            }
+                        }
+                    }
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
 </MudContainer>
 
 

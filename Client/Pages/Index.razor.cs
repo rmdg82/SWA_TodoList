@@ -1,5 +1,6 @@
 ﻿using Client.HttpRepository;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Shared;
 using Shared.Dtos;
 using System;
@@ -22,6 +23,8 @@ namespace Client.Pages
 
         public string NewTodoText { get; set; } = string.Empty;
 
+        public MudListItem SelectedTodo { get; set; } = new();
+
         protected override async Task OnInitializedAsync()
         {
             await LoadAllTodos();
@@ -38,6 +41,17 @@ namespace Client.Pages
             await TodoHttpRepository.AddTodo(todoToAdd);
             await LoadAllTodos();
             NewTodoText = string.Empty;
+        }
+
+        public async Task ToggleTodo()
+        {
+            string todoId = SelectedTodo.Value.ToString() ?? string.Empty;
+
+            var todo = AllTodos.FirstOrDefault(x => x.Id == todoId);
+            todo.IsCompleted = !todo.IsCompleted;
+            StateHasChanged();
+
+            await TodoHttpRepository.Toggle(todoId);
         }
 
         public async Task ResetDb()

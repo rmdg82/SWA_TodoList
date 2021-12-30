@@ -55,9 +55,9 @@ namespace Client.HttpRepository
             return "We got some problems";
         }
 
-        public Task Toggle(string todoId)
+        public async Task Toggle(string todoId)
         {
-            throw new NotImplementedException();
+            await _httpClient.PostAsync($"/api/todos/{todoId}/toggle", null);
         }
 
         public Task UpdateTodo(string todoId, TodoDtoToUpdate dtoToUpdate)
