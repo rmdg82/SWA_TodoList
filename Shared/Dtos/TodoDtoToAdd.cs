@@ -14,5 +14,11 @@ namespace Shared.Dtos
 
         [JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; init; }
+
+        public TodoDtoToAdd(string text)
+        {
+            Text = text;
+            IsCompleted = false;
+        }
     }
 }

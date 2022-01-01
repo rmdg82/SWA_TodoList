@@ -112,6 +112,7 @@ namespace Api
 
             try
             {
+                _logger.LogInformation($"Added Todo with id: {todoToAdd.Id} text: {todoToAdd.Text}");
                 await _todoRepository.AddAsync(todoToAdd);
             }
             catch (Exception ex)

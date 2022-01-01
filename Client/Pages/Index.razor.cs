@@ -1,5 +1,6 @@
 ﻿using Client.HttpRepository;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using Shared;
 using Shared.Dtos;
@@ -16,9 +17,6 @@ namespace Client.Pages
         [Inject]
         public ITodoHttpRepository TodoHttpRepository { get; set; }
 
-        [Inject]
-        public IConfiguration Configuration { get; set; }
-
         public IEnumerable<TodoDto> AllTodos { get; set; }
 
         public string NewTodoText { get; set; } = string.Empty;
@@ -30,13 +28,17 @@ namespace Client.Pages
             await LoadAllTodos();
         }
 
+        //public async Task AddTodoAfterEnter(KeyboardEventArgs e)
+        //{
+        //    if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        //    {
+        //        await AddTodo();
+        //    }
+        //}
+
         public async Task AddTodo()
         {
-            var todoToAdd = new TodoDtoToAdd()
-            {
-                Text = NewTodoText,
-                IsCompleted = false
-            };
+            var todoToAdd = new TodoDtoToAdd(NewTodoText);
 
             await TodoHttpRepository.AddTodo(todoToAdd);
             await LoadAllTodos();
