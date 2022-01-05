@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Dtos
 {
-    public record TodoDto
+    public record struct TodoDto
     {
         [JsonPropertyName("id")]
         public string Id { get; init; }
@@ -17,5 +17,11 @@ namespace Shared.Dtos
 
         [JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; set; }
+
+        [JsonPropertyName("createdAt")]
+        public string CreatedAt { get; set; }
+
+        [JsonPropertyName("completedAt")]
+        public string? CompletedAt { get; set; }
     }
 }

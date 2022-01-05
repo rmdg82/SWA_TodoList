@@ -18,19 +18,25 @@ namespace Api.Repositories
             {
                 Id = Guid.NewGuid().ToString(),
                 Text = "Wash the dishes",
-                IsCompleted = false
+                IsCompleted = false,
+                CreatedAt = new DateTime(2021, 01, 01, 12, 05, 00),
+                CompletedAt = null
             },
             new Todo
             {
                 Id = Guid.NewGuid().ToString(),
                 Text = "Clean the house",
-                IsCompleted = true
+                IsCompleted = true,
+                CreatedAt = new DateTime(2021, 02, 03, 15, 45, 10),
+                CompletedAt = new DateTime(2021, 02, 03, 15, 45, 10).AddDays(10)
             },
             new Todo
             {
                 Id = Guid.NewGuid().ToString(),
                 Text = "Mow the meadow",
-                IsCompleted = false
+                IsCompleted = false,
+                CreatedAt = new DateTime(2021, 03, 03, 17, 35, 20),
+                CompletedAt = null
             }
         };
 
@@ -42,6 +48,30 @@ namespace Api.Repositories
         public async Task AddAsync(Todo todo)
         {
             await _container.CreateItemAsync(todo, new PartitionKey(todo.Id));
+        }
+
+        public async Task CompleteAsync(string todoId)
+        {
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
+            var todo = await GetByIdAsync(todoId);
+            if (todo is null)
+            {
+                throw new Exception($"Element with id [{todoId}] not found.");
+            }
+
+            if (todo.IsCompleted)
+            {
+                throw new Exception($"Element with id [{todoId}] is already completed.");
+            }
+
+            todo.IsCompleted = true;
+            todo.CompletedAt = DateTime.Now;
+
+            await UpdateAsync(todoId, todo);
         }
 
         public async Task DeleteAsync(string todoId)
@@ -121,6 +151,11 @@ namespace Api.Repositories
 
         public async Task ToggleCompletionAsync(string todoId)
         {
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
             var todo = await GetByIdAsync(todoId);
             if (todo is null)
             {

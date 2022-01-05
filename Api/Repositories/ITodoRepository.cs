@@ -19,7 +19,10 @@ namespace Api.Repositories
 
         Task<Todo> GetByIdAsync(string todoId);
 
+        [Obsolete("Must be replaced by CompleteAsync")]
         Task ToggleCompletionAsync(string todoId);
+
+        Task CompleteAsync(string todoId);
 
         Task AddAsync(Todo todo);
 

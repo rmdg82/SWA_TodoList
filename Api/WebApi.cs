@@ -146,6 +146,28 @@ namespace Api
             return new OkResult();
         }
 
+        [FunctionName("CompleteTodo")]
+        public async Task<IActionResult> CompleteTodo([HttpTrigger(AuthorizationLevel.Function, "post", Route = "todos/{todoId}/complete")] HttpRequest req, string todoId)
+        {
+            try
+            {
+                _logger.LogInformation($"Request complete todo with id [{todoId}]");
+                await _todoRepository.CompleteAsync(todoId);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogError($"Catched exception: [{ex.Message}]");
+                return new NotFoundResult();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Catched exception: [{ex.Message}]");
+                return new BadRequestObjectResult(ex.Message);
+            }
+
+            return new OkResult();
+        }
+
         [FunctionName("DeleteTodo")]
         public async Task<IActionResult> DeleteTodo([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "todos/{todoId}")] HttpRequest req, string todoId)
         {
