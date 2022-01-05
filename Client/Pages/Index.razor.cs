@@ -15,26 +15,19 @@ namespace Client.Pages
     public partial class Index
     {
         [Inject]
+        public IDialogService DialogService { get; set; }
+
+        [Inject]
         public ITodoHttpRepository TodoHttpRepository { get; set; }
 
         public IEnumerable<TodoDto> AllTodos { get; set; }
 
         public string NewTodoText { get; set; } = string.Empty;
 
-        public MudListItem SelectedTodo { get; set; } = new();
-
         protected override async Task OnInitializedAsync()
         {
             await LoadAllTodos();
         }
-
-        //public async Task AddTodoAfterEnter(KeyboardEventArgs e)
-        //{
-        //    if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        //    {
-        //        await AddTodo();
-        //    }
-        //}
 
         public async Task AddTodo()
         {
@@ -45,15 +38,21 @@ namespace Client.Pages
             NewTodoText = string.Empty;
         }
 
-        public async Task ToggleTodo()
+        public async Task CompleteTodo(string todoId)
         {
-            string todoId = SelectedTodo.Value.ToString() ?? string.Empty;
+            await TodoHttpRepository.CompleteTodo(todoId);
+            await LoadAllTodos();
+        }
 
-            var todo = AllTodos.FirstOrDefault(x => x.Id == todoId);
-            todo.IsCompleted = !todo.IsCompleted;
-            StateHasChanged();
+        public async Task ShowMessage()
+        {
+            await DialogService.ShowMessageBox("Not implemented", "Method not implemented yet!");
+        }
 
-            await TodoHttpRepository.Toggle(todoId);
+        public async Task DeleteTodo(string todoId)
+        {
+            await TodoHttpRepository.DeleteTodo(todoId);
+            await LoadAllTodos();
         }
 
         public async Task ResetDb()
