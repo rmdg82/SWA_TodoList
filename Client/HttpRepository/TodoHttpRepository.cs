@@ -23,24 +23,34 @@ namespace Client.HttpRepository
             await _httpClient.PostAsJsonAsync<TodoDtoToAdd>("/api/todos", dtoToAdd);
         }
 
-        public Task DeleteTodo(string todoId)
+        public async Task DeleteTodo(string todoId)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
+            await _httpClient.DeleteAsync($"/api/todos/{todoId}");
         }
 
-        public Task<TodoDto> GetTodo(string todoId)
+        public async Task<TodoDto> GetTodo(string todoId)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(todoId))
+            {
+                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            }
+
+            return await _httpClient.GetFromJsonAsync<TodoDto>($"/api/todos/{todoId}");
         }
 
         public async Task<IEnumerable<TodoDto>> GetTodos(bool onlyUncompleted = false)
         {
             if (onlyUncompleted)
             {
-                return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos?onlyUncompleted=true");
+                return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos?onlyUncompleted=true") ?? new List<TodoDto>();
             }
 
-            return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos");
+            return await _httpClient.GetFromJsonAsync<IEnumerable<TodoDto>>("/api/todos") ?? new List<TodoDto>();
         }
 
         public async Task<string> ResetDb()
@@ -55,9 +65,9 @@ namespace Client.HttpRepository
             return "We got some problems";
         }
 
-        public async Task Toggle(string todoId)
+        public async Task CompleteTodo(string todoId)
         {
-            await _httpClient.PostAsync($"/api/todos/{todoId}/toggle", null);
+            await _httpClient.PostAsync($"/api/todos/{todoId}/complete", null);
         }
 
         public Task UpdateTodo(string todoId, TodoDtoToUpdate dtoToUpdate)

@@ -17,7 +17,7 @@ namespace Client.HttpRepository
 
         Task AddTodo(TodoDtoToAdd dtoToAdd);
 
-        Task Toggle(string todoId);
+        Task CompleteTodo(string todoId);
 
         Task DeleteTodo(string todoId);
 
