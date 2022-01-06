@@ -4,16 +4,19 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Client</title>
+    <title>Blazor - Todo List</title>
     <base href="/" />
+    <link rel="icon" href="favicon.ico" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-    <!--<link href="css/app.css" rel="stylesheet" />-->
+    <link href="css/app.css" rel="stylesheet" />
     <link href="Client.styles.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div class="spinner"></div>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
