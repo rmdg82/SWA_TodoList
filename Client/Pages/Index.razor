@@ -58,23 +58,23 @@
                             @if (!todo.IsCompleted)
                                 {
                                     <MudGrid>
-                                        <MudItem md="1">
+                                        <MudItem xs="2" md="1">
                                             <MudIconButton Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Large" OnClick="() => CompleteTodo(todo.Id)"></MudIconButton>
                                         </MudItem>
-                                        <MudItem md="9" Class="d-flex align-center">
+                                        <MudItem xs="10" md="9" Class="d-flex align-center">
                                             <MudTooltip Arrow="true">
                                                 <ChildContent>
-                                                    <MudText Typo="Typo.h5">@todo.Text</MudText>
+                                                    <MudText Typo="Typo.body1">@todo.Text</MudText>
                                                 </ChildContent>
                                                 <TooltipContent>
                                                     <MudText>Added on '@todo.CreatedAt'</MudText>
                                                 </TooltipContent>
                                             </MudTooltip>
                                         </MudItem>
-                                        <MudItem md="1">
+                                        <MudItem xs="6" md="1">
                                             <MudIconButton Color="Color.Info" Icon="@Icons.Filled.Create" Size="Size.Large" OnClick="ShowMessage"> </MudIconButton>
                                         </MudItem>
-                                        <MudItem md="1">
+                                        <MudItem xs="6" md="1">
                                             <MudIconButton Color="Color.Error" Icon="@Icons.Filled.Delete" Size="Size.Large" OnClick="() => DeleteTodo(todo.Id)"> </MudIconButton>
                                         </MudItem>
                                     </MudGrid>
@@ -109,20 +109,20 @@
                             @if (todo.IsCompleted)
                             {
                                 <MudGrid>
-                                    <MudItem md="1">
+                                    <MudItem xs="2" md="1">
                                         <MudIconButton Icon="@Icons.Filled.CheckCircle" Color="Color.Success" Size="Size.Large"></MudIconButton>
                                     </MudItem>
-                                    <MudItem md="10" Class="d-flex align-center">
+                                    <MudItem xs="10" md="10" Class="d-flex align-center">
                                             <MudTooltip Arrow="true">
                                                 <ChildContent>
-                                                    <MudText Typo="Typo.h5">@todo.Text</MudText>
+                                                    <MudText Typo="Typo.body1">@todo.Text</MudText>
                                                 </ChildContent>
                                                 <TooltipContent>
                                                     <MudText >Completed on '@todo.CompletedAt'</MudText>
                                                 </TooltipContent>
                                             </MudTooltip>
                                         </MudItem>
-                                    <MudItem md="1">
+                                    <MudItem xs="12" md="1">
                                         <MudIconButton Color="Color.Error" Icon="@Icons.Filled.Delete" Size="Size.Large" OnClick="() => DeleteTodo(todo.Id)"> </MudIconButton>
                                     </MudItem>
                                 </MudGrid>
