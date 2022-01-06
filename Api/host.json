@@ -1,11 +1,19 @@
 {
-    "version": "2.0",
-    "logging": {
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true,
-                "excludedTypes": "Request"
-            }
-        }
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      },
+      "logLevel": {
+        "Api.WebApi": "Information",
+        "default": "Warning"
+      },
+      "console": {
+        "isEnabled": "true",
+        "DisableColors": "false"
+      }
     }
+  }
 }
