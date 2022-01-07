@@ -1,6 +1,7 @@
 ﻿using Client.HttpRepository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using Shared;
 using Shared.Dtos;
@@ -14,6 +15,9 @@ namespace Client.Pages
 {
     public partial class Index
     {
+        [Inject]
+        public IWebAssemblyHostEnvironment HostEnvironment { get; set; }
+
         [Inject]
         public IDialogService DialogService { get; set; }
 
