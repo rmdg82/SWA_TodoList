@@ -24,7 +24,7 @@
                 </MudCardHeader>
                 <MudDivider DividerType="DividerType.Middle" />
                 <MudCardContent>
-                    <MudTextField AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
+                    <MudTextField T="string" Counter="20"  Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -132,7 +132,7 @@
                 </MudCardContent>
             </MudCard>
         </MudItem>
-        @if(HostEnvironment.Environment == "Development")
+        @if(HostEnvironment!.Environment == "Development")
         {
             <MudItem xs="12"> 
                 <MudButton FullWidth="true" OnClick="ResetDb" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Reset Db</MudButton>
