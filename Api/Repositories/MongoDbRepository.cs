@@ -7,172 +7,171 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Api.Repositories
+namespace Api.Repositories;
+
+public class MongoDbRepository : ITodoRepository
 {
-    public class MongoDbRepository : ITodoRepository
+    private readonly IMongoCollection<Todo> _todoCollection;
+
+    private readonly List<Todo> _fakeTodos = new()
     {
-        private readonly IMongoCollection<Todo> _todoCollection;
-
-        private readonly List<Todo> _fakeTodos = new()
+        new Todo
         {
-            new Todo
-            {
-                Id = Guid.NewGuid().ToString(),
-                Text = "Wash the dishes",
-                IsCompleted = false,
-                CreatedAt = new DateTime(2021, 01, 01, 12, 05, 00),
-                CompletedAt = null
-            },
-            new Todo
-            {
-                Id = Guid.NewGuid().ToString(),
-                Text = "Clean the house",
-                IsCompleted = true,
-                CreatedAt = new DateTime(2021, 02, 03, 15, 45, 10),
-                CompletedAt = new DateTime(2021, 02, 03, 15, 45, 10).AddDays(10)
-            },
-            new Todo
-            {
-                Id = Guid.NewGuid().ToString(),
-                Text = "Mow the meadow",
-                IsCompleted = false,
-                CreatedAt = new DateTime(2021, 03, 03, 17, 35, 20),
-                CompletedAt = null
-            }
-        };
-
-        public MongoDbRepository(MongoClient mongoClient, string databaseId, string collectionId)
+            Id = Guid.NewGuid().ToString(),
+            Text = "Wash the dishes",
+            IsCompleted = false,
+            CreatedAt = new DateTime(2021, 01, 01, 12, 05, 00),
+            CompletedAt = null
+        },
+        new Todo
         {
-            var database = mongoClient.GetDatabase(databaseId);
-            _todoCollection = database.GetCollection<Todo>(collectionId);
+            Id = Guid.NewGuid().ToString(),
+            Text = "Clean the house",
+            IsCompleted = true,
+            CreatedAt = new DateTime(2021, 02, 03, 15, 45, 10),
+            CompletedAt = new DateTime(2021, 02, 03, 15, 45, 10).AddDays(10)
+        },
+        new Todo
+        {
+            Id = Guid.NewGuid().ToString(),
+            Text = "Mow the meadow",
+            IsCompleted = false,
+            CreatedAt = new DateTime(2021, 03, 03, 17, 35, 20),
+            CompletedAt = null
+        }
+    };
+
+    public MongoDbRepository(MongoClient mongoClient, string databaseId, string collectionId)
+    {
+        var database = mongoClient.GetDatabase(databaseId);
+        _todoCollection = database.GetCollection<Todo>(collectionId);
+    }
+
+    public async Task AddAsync(Todo todo)
+    {
+        if (todo is null)
+        {
+            throw new ArgumentNullException(nameof(todo));
         }
 
-        public async Task AddAsync(Todo todo)
-        {
-            if (todo is null)
-            {
-                throw new ArgumentNullException(nameof(todo));
-            }
+        await _todoCollection.InsertOneAsync(todo);
+    }
 
-            await _todoCollection.InsertOneAsync(todo);
+    public async Task CompleteAsync(string todoId)
+    {
+        if (string.IsNullOrWhiteSpace(todoId))
+        {
+            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
         }
 
-        public async Task CompleteAsync(string todoId)
+        var todo = await GetByIdAsync(todoId);
+        if (todo is null)
         {
-            if (string.IsNullOrWhiteSpace(todoId))
-            {
-                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
-            }
-
-            var todo = await GetByIdAsync(todoId);
-            if (todo is null)
-            {
-                throw new Exception($"Element with id [{todoId}] not found.");
-            }
-
-            if (todo.IsCompleted)
-            {
-                throw new Exception($"Element with id [{todoId}] is already completed.");
-            }
-
-            todo.IsCompleted = true;
-            todo.CompletedAt = DateTime.Now;
-
-            await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
+            throw new Exception($"Element with id [{todoId}] not found.");
         }
 
-        public async Task DeleteAsync(string todoId)
+        if (todo.IsCompleted)
         {
-            if (string.IsNullOrWhiteSpace(todoId))
-            {
-                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
-            }
-
-            await _todoCollection.DeleteOneAsync(x => x.Id == todoId);
+            throw new Exception($"Element with id [{todoId}] is already completed.");
         }
 
-        public async Task<Todo> GetByIdAsync(string todoId)
-        {
-            if (string.IsNullOrWhiteSpace(todoId))
-            {
-                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
-            }
+        todo.IsCompleted = true;
+        todo.CompletedAt = DateTime.Now;
 
-            return await _todoCollection.Find(x => x.Id == todoId).FirstOrDefaultAsync();
+        await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
+    }
+
+    public async Task DeleteAsync(string todoId)
+    {
+        if (string.IsNullOrWhiteSpace(todoId))
+        {
+            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
         }
 
-        public Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery)
+        await _todoCollection.DeleteOneAsync(x => x.Id == todoId);
+    }
+
+    public async Task<Todo> GetByIdAsync(string todoId)
+    {
+        if (string.IsNullOrWhiteSpace(todoId))
         {
-            throw new NotImplementedException();
+            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
         }
 
-        public async Task<IEnumerable<Todo>> GetByQueryAsync(bool getOnlyUncompleted = false)
-        {
-            if (getOnlyUncompleted)
-            {
-                return await _todoCollection.Find(x => x.IsCompleted == true).ToListAsync();
-            }
+        return await _todoCollection.Find(x => x.Id == todoId).FirstOrDefaultAsync();
+    }
 
-            return await _todoCollection.Find(x => true).ToListAsync();
+    public Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<Todo>> GetByQueryAsync(bool getOnlyUncompleted = false)
+    {
+        if (getOnlyUncompleted)
+        {
+            return await _todoCollection.Find(x => x.IsCompleted == true).ToListAsync();
         }
 
-        public async Task<bool> InitializeCosmosDbDataIfEmpty()
+        return await _todoCollection.Find(x => true).ToListAsync();
+    }
+
+    public async Task<bool> InitializeCosmosDbDataIfEmpty()
+    {
+        var todos = await _todoCollection.Find(x => true).ToListAsync();
+
+        if (!todos.Any())
         {
-            var todos = await _todoCollection.Find(x => true).ToListAsync();
-
-            if (!todos.Any())
-            {
-                await _todoCollection.InsertManyAsync(_fakeTodos);
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public async Task ResetDb()
-        {
-            await _todoCollection.DeleteManyAsync(Builders<Todo>.Filter.Empty);
             await _todoCollection.InsertManyAsync(_fakeTodos);
+
+            return true;
         }
 
-        public async Task ToggleCompletionAsync(string todoId)
+        return false;
+    }
+
+    public async Task ResetDb()
+    {
+        await _todoCollection.DeleteManyAsync(Builders<Todo>.Filter.Empty);
+        await _todoCollection.InsertManyAsync(_fakeTodos);
+    }
+
+    public async Task ToggleCompletionAsync(string todoId)
+    {
+        if (string.IsNullOrWhiteSpace(todoId))
         {
-            if (string.IsNullOrWhiteSpace(todoId))
-            {
-                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
-            }
-
-            var todo = await GetByIdAsync(todoId);
-            if (todo is null)
-            {
-                throw new Exception($"Element with id [{todoId}] not found.");
-            }
-
-            todo.IsCompleted = !todo.IsCompleted;
-
-            await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
+            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
         }
 
-        public async Task UpdateAsync(string todoId, Todo todoUpdated)
+        var todo = await GetByIdAsync(todoId);
+        if (todo is null)
         {
-            if (string.IsNullOrWhiteSpace(todoId))
-            {
-                throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
-            }
-
-            if (todoUpdated is null)
-            {
-                throw new ArgumentNullException(nameof(todoUpdated));
-            }
-
-            var todo = await GetByIdAsync(todoId);
-            if (todo is null)
-            {
-                throw new Exception($"Element with id [{todoId}] not found.");
-            }
-
-            await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todoUpdated);
+            throw new Exception($"Element with id [{todoId}] not found.");
         }
+
+        todo.IsCompleted = !todo.IsCompleted;
+
+        await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
+    }
+
+    public async Task UpdateAsync(string todoId, Todo todoUpdated)
+    {
+        if (string.IsNullOrWhiteSpace(todoId))
+        {
+            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+        }
+
+        if (todoUpdated is null)
+        {
+            throw new ArgumentNullException(nameof(todoUpdated));
+        }
+
+        var todo = await GetByIdAsync(todoId);
+        if (todo is null)
+        {
+            throw new Exception($"Element with id [{todoId}] not found.");
+        }
+
+        await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todoUpdated);
     }
 }
