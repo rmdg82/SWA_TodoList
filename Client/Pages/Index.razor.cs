@@ -8,6 +8,8 @@ namespace Client.Pages
 {
     public partial class Index
     {
+        private const int _maxLengthNewTodo = 20;
+
         [Inject]
         public IWebAssemblyHostEnvironment? HostEnvironment { get; set; }
 
@@ -21,7 +23,7 @@ namespace Client.Pages
 
         public string NewTodoText { get; set; } = string.Empty;
 
-        private Func<string, string?> ValidationFunc { get; set; } = CheckMaxCharacters;
+        private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
 
         protected override async Task OnInitializedAsync()
         {
@@ -30,7 +32,7 @@ namespace Client.Pages
 
         public async Task AddTodo()
         {
-            if (CheckMaxCharacters(NewTodoText) is not null)
+            if (CheckMaxLength(NewTodoText) is not null)
             {
                 await DialogService!.ShowMessageBox("Error", "The todo size cannot exceed 20 characters long.");
                 return;
@@ -74,11 +76,11 @@ namespace Client.Pages
             StateHasChanged();
         }
 
-        private static string? CheckMaxCharacters(string ch)
+        private static string? CheckMaxLength(string ch)
         {
-            if (!string.IsNullOrEmpty(ch) && ch.Length > 25)
+            if (!string.IsNullOrEmpty(ch) && ch.Length > _maxLengthNewTodo)
             {
-                return "Max 20 characters allowed!";
+                return $"Max {_maxLengthNewTodo} characters allowed";
             }
 
             return null;
