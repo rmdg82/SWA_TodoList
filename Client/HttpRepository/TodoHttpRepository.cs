@@ -20,7 +20,7 @@ namespace Client.HttpRepository
 
         public async Task AddTodo(TodoDtoToAdd dtoToAdd)
         {
-            await _httpClient.PostAsJsonAsync<TodoDtoToAdd>("/api/todos", dtoToAdd);
+            await _httpClient.PostAsJsonAsync("/api/todos", dtoToAdd);
         }
 
         public async Task DeleteTodo(string todoId)
@@ -70,9 +70,9 @@ namespace Client.HttpRepository
             await _httpClient.PostAsync($"/api/todos/{todoId}/complete", null);
         }
 
-        public Task UpdateTodo(string todoId, TodoDtoToUpdate dtoToUpdate)
+        public async Task UpdateTodo(string todoId, TodoDtoToUpdate dtoToUpdate)
         {
-            throw new NotImplementedException();
+            await _httpClient.PutAsJsonAsync($"/api/todos/{todoId}", dtoToUpdate);
         }
     }
 }

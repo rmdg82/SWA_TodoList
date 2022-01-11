@@ -24,7 +24,7 @@
                 </MudCardHeader>
                 <MudDivider DividerType="DividerType.Middle" />
                 <MudCardContent>
-                    <MudTextField T="string" Counter="20"  Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
+                    <MudTextField T="string" Counter="20" @onkeydown="AddTodoAfterEnter" Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -72,7 +72,7 @@
                                             </MudTooltip>
                                         </MudItem>
                                         <MudItem xs="1" md="1">
-                                            <MudIconButton Color="Color.Info" Icon="@Icons.Filled.Create" Size="Size.Large" OnClick="ShowMessage"> </MudIconButton>
+                                            <MudIconButton Color="Color.Info" Icon="@Icons.Filled.Create" Size="Size.Large" OnClick="() => UpdateTodo(todo.Id,todo.Text)"> </MudIconButton>
                                         </MudItem>
                                         <MudItem xs="1" md="1">
                                             <MudIconButton Color="Color.Error" Icon="@Icons.Filled.Delete" Size="Size.Large" OnClick="() => DeleteTodo(todo.Id)"> </MudIconButton>
@@ -141,6 +141,24 @@
         
     </MudGrid>
 </MudContainer>
+
+
+<!-- Update todo dialog -->
+<MudDialog @bind-IsVisible="isUpdateDialogVisible" Options="new DialogOptions(){ FullWidth=true }">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3"/>Update todo
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" @bind-Value="TodoTextForUpdate" Counter="20"  Immediate="true" Validation="ValidationFunc">
+        </MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog">Cancel</MudButton>
+        <MudButton OnClick="Submit" Variant="Variant.Filled" Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
 
 
 
