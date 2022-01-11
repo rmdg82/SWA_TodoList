@@ -54,14 +54,14 @@ public class Startup : FunctionsStartup
     {
         string connectionString = Environment.GetEnvironmentVariable("MongoDbConnectionString");
         string databaseId = Environment.GetEnvironmentVariable("DatabaseId");
-        string containerId = Environment.GetEnvironmentVariable("ContainerId");
+        string collectionId = Environment.GetEnvironmentVariable("ContainerId");
 
         var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
         ConventionRegistry.Register("camelCase", conventionPack, t => true);
 
         var mongoClient = new MongoClient(connectionString);
 
-        var mongoDbRepository = new MongoDbRepository(mongoClient, databaseId, containerId);
+        var mongoDbRepository = new MongoDbRepository(mongoClient, databaseId, collectionId);
 
         return mongoDbRepository;
     }
