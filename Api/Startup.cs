@@ -24,8 +24,8 @@ namespace Api
                 options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.Converters.Add(new JsonStringEnumConverter());
             });
-            //builder.Services.AddSingleton<ITodoRepository>(InitializeCosmosClientInstanceAsync().GetAwaiter().GetResult());
-            builder.Services.AddSingleton<ITodoRepository>(InitializeMongoDbRepositoryAsync());
+            builder.Services.AddSingleton<ITodoRepository>(InitializeCosmosClientInstanceAsync().GetAwaiter().GetResult());
+            //builder.Services.AddSingleton<ITodoRepository>(InitializeMongoDbRepositoryAsync());
         }
 
         private static async Task<CosmosTodoRepository> InitializeCosmosClientInstanceAsync()

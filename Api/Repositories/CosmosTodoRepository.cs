@@ -136,7 +136,7 @@ namespace Api.Repositories
 
         public async Task ResetDb()
         {
-            var allTodos = _container.GetItemLinqQueryable<Todo>();
+            var allTodos = await GetByQueryAsync("SELECT * FROM c");
 
             foreach (var item in allTodos)
             {
