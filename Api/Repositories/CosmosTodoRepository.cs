@@ -37,6 +37,14 @@ public class CosmosTodoRepository : ITodoRepository
             IsCompleted = false,
             CreatedAt = new DateTime(2021, 03, 03, 17, 35, 20),
             CompletedAt = null
+        },
+        new Todo
+        {
+            Id = Guid.NewGuid().ToString(),
+            Text = "Walk the dog",
+            IsCompleted = false,
+            CreatedAt = new DateTime(2021, 04, 04, 18, 45, 20),
+            CompletedAt = null
         }
     };
 
