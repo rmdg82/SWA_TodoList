@@ -37,6 +37,12 @@ public partial class Index
 
     public async Task AddTodo()
     {
+        // Empty text is not allowed
+        if (string.IsNullOrWhiteSpace(NewTodoText))
+        {
+            return;
+        }
+
         if (CheckMaxLength(NewTodoText) is not null)
         {
             await DialogService!.ShowMessageBox("Error", "The todo size cannot exceed 20 characters.");
@@ -101,7 +107,7 @@ public partial class Index
 
     private static string? CheckMaxLength(string ch)
     {
-        if (!string.IsNullOrEmpty(ch) && ch.Length > _maxLengthNewTodo)
+        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > _maxLengthNewTodo)
         {
             return $"Max {_maxLengthNewTodo} characters";
         }
