@@ -12,17 +12,9 @@ namespace Shared.Dtos
         [JsonPropertyName("text")]
         public string Text { get; init; }
 
-        [JsonPropertyName("isCompleted")]
-        public bool IsCompleted { get; init; }
-
-        [JsonPropertyName("createdAt")]
-        public string CreatedAt { get; init; }
-
         public TodoDtoToAdd(string text)
         {
             Text = text;
-            IsCompleted = false;
-            CreatedAt = DateTime.Now.ToString("dd/MM/yyyy H:mm");
         }
     }
 }
