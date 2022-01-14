@@ -10,7 +10,6 @@ using Api.Repositories;
 using AutoMapper;
 using Api.Models;
 using System.Collections.Generic;
-using System.Web;
 using System.Linq;
 using Shared.Dtos;
 using System.Text.Json;
@@ -82,7 +81,8 @@ public class WebApi
             _logger.LogInformation(ex.Message);
         }
 
-        return new OkObjectResult(_mapper.Map<IEnumerable<TodoDto>>(todos));
+        var todosDto = _mapper.Map<IEnumerable<TodoDto>>(todos);
+        return new OkObjectResult(todosDto);
     }
 
     [FunctionName("GetTodosById")]
@@ -122,28 +122,6 @@ public class WebApi
         }
 
         return new CreatedAtRouteResult(new { todoId = todoToAdd.Id }, todoToAdd);
-    }
-
-    [FunctionName("ToggleCompletion")]
-    public async Task<IActionResult> ToggleCompletion([HttpTrigger(AuthorizationLevel.Function, "post", Route = "todos/{todoId}/toggle")] HttpRequest req, string todoId)
-    {
-        try
-        {
-            _logger.LogInformation($"Toggle completion for todo with id [{todoId}]");
-            await _todoRepository.ToggleCompletionAsync(todoId);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundResult();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestObjectResult(ex.Message);
-        }
-
-        return new OkResult();
     }
 
     [FunctionName("CompleteTodo")]
