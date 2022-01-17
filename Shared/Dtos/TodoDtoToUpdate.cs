@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Shared.Dtos
 {
-    public record struct TodoDtoToUpdate
+    public class TodoDtoToUpdate
     {
         [JsonPropertyName("text")]
-        public string Text { get; init; }
+        public string Text { get; set; }
 
         public TodoDtoToUpdate(string text)
         {
