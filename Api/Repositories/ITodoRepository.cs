@@ -11,7 +11,7 @@ public interface ITodoRepository
 {
     Task ResetDb();
 
-    Task<bool> InitializeCosmosDbDataIfEmpty();
+    Task<bool> InitializeDbDataIfEmpty();
 
     Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery);
 

@@ -35,7 +35,7 @@ public class WebApi
     public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "initDb")] HttpRequest req)
     {
         _logger.LogInformation("Initialize Db with fake data.");
-        var result = await _todoRepository.InitializeCosmosDbDataIfEmpty();
+        var result = await _todoRepository.InitializeDbDataIfEmpty();
 
         if (result)
         {
@@ -175,13 +175,18 @@ public class WebApi
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation($"New request for {nameof(UpdateTodo)} with id [{todoId}] and body [{requestBody}].");
 
+        var originalTodo = await _todoRepository.GetByIdAsync(todoId);
+        if (originalTodo != null)
+        {
+            return new NotFoundObjectResult($"Todo with id {todoId} not found");
+        }
+
         var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
-        var todoToAdd = _mapper.Map<Todo>(todoToUpdateDto);
-        todoToAdd.Id = todoId;
+        originalTodo.Text = todoToUpdateDto.Text;
 
         try
         {
-            await _todoRepository.UpdateAsync(todoId, todoToAdd);
+            await _todoRepository.UpdateAsync(todoId, originalTodo);
         }
         catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.NotFound))
         {

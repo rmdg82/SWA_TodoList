@@ -126,7 +126,7 @@ public class CosmosTodoRepository : ITodoRepository
         }
     }
 
-    public async Task<bool> InitializeCosmosDbDataIfEmpty()
+    public async Task<bool> InitializeDbDataIfEmpty()
     {
         var todos = await GetByQueryAsync("SELECT * FROM c");
 

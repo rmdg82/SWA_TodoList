@@ -22,8 +22,10 @@ public class Startup : FunctionsStartup
         builder.Services.Configure<JsonSerializerOptions>(options =>
         {
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.WriteIndented = true;
             options.Converters.Add(new JsonStringEnumConverter());
         });
+
         //builder.Services.AddSingleton<ITodoRepository>(InitializeCosmosClientInstanceAsync().GetAwaiter().GetResult());
         builder.Services.AddSingleton<ITodoRepository>(InitializeMongoDbRepositoryAsync());
     }

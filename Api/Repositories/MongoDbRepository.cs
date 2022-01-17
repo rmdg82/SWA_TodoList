@@ -124,7 +124,7 @@ public class MongoDbRepository : ITodoRepository
         return await _todoCollection.Find(x => true).ToListAsync();
     }
 
-    public async Task<bool> InitializeCosmosDbDataIfEmpty()
+    public async Task<bool> InitializeDbDataIfEmpty()
     {
         var todos = await _todoCollection.Find(x => true).ToListAsync();
 
