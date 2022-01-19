@@ -180,13 +180,11 @@ public class WebApi
         {
             return new NotFoundObjectResult($"Todo with id {todoId} not found");
         }
-
         var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
-        originalTodo.Text = todoToUpdateDto.Text;
 
         try
         {
-            await _todoRepository.UpdateAsync(todoId, originalTodo);
+            await _todoRepository.UpdateAsync(todoId, todoToUpdateDto.Text);
         }
         catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.NotFound))
         {
