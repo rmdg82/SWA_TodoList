@@ -162,16 +162,11 @@ public class MongoDbRepository : ITodoRepository
         await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
     }
 
-    public async Task UpdateAsync(string todoId, Todo todoUpdated)
+    public async Task UpdateAsync(string todoId, string todoTextToUpdate)
     {
         if (string.IsNullOrWhiteSpace(todoId))
         {
             throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
-        }
-
-        if (todoUpdated is null)
-        {
-            throw new ArgumentNullException(nameof(todoUpdated));
         }
 
         var todo = await GetByIdAsync(todoId);
@@ -180,6 +175,8 @@ public class MongoDbRepository : ITodoRepository
             throw new Exception($"Element with id [{todoId}] not found.");
         }
 
-        await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todoUpdated);
+        todo.Text = todoTextToUpdate;
+
+        await _todoCollection.ReplaceOneAsync(x => x.Id == todoId, todo);
     }
 }

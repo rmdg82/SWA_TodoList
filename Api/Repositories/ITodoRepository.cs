@@ -19,14 +19,11 @@ public interface ITodoRepository
 
     Task<Todo> GetByIdAsync(string todoId);
 
-    [Obsolete("Must be replaced by CompleteAsync")]
-    Task ToggleCompletionAsync(string todoId);
-
     Task CompleteAsync(string todoId);
 
     Task AddAsync(Todo todo);
 
-    Task UpdateAsync(string todoId, Todo todoUpdated);
+    Task UpdateAsync(string todoId, string todoTextToUpdate);
 
     Task DeleteAsync(string todoId);
 }

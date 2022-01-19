@@ -175,11 +175,11 @@ public class CosmosTodoRepository : ITodoRepository
         await UpdateAsync(todoId, todo);
     }
 
-    public async Task UpdateAsync(string todoId, Todo todoUpdated)
+    public async Task UpdateAsync(string todoId, string todoTextToUpdate)
     {
-        if (todoUpdated is null)
+        if (string.IsNullOrWhiteSpace(todoId))
         {
-            throw new ArgumentNullException(nameof(todoUpdated));
+            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
         }
 
         var todo = await GetByIdAsync(todoId);
@@ -189,6 +189,8 @@ public class CosmosTodoRepository : ITodoRepository
             throw new Exception($"Element with id [{todoId}] not found.");
         }
 
-        await _container.UpsertItemAsync(todoUpdated, new PartitionKey(todoId));
+        todo.Text = todoTextToUpdate;
+
+        await _container.UpsertItemAsync(todo, new PartitionKey(todoId));
     }
 }
