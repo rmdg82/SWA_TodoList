@@ -175,11 +175,11 @@ public class WebApi
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation($"New request for {nameof(UpdateTodo)} with id [{todoId}] and body [{requestBody}].");
 
-        var originalTodo = await _todoRepository.GetByIdAsync(todoId);
-        if (originalTodo != null)
-        {
-            return new NotFoundObjectResult($"Todo with id {todoId} not found");
-        }
+        //var originalTodo = await _todoRepository.GetByIdAsync(todoId);
+        //if (originalTodo == null)
+        //{
+        //    return new NotFoundObjectResult($"Todo with id {todoId} not found");
+        //}
         var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
 
         try
@@ -199,12 +199,12 @@ public class WebApi
         catch (KeyNotFoundException ex)
         {
             _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundResult();
+            return new NotFoundObjectResult(ex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestResult();
+            return new BadRequestObjectResult(ex.Message);
         }
 
         return new NoContentResult();

@@ -1,16 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
 <MudThemeProvider/>
-<MudDialogProvider/>
+<MudDialogProvider />
 <MudSnackbarProvider/>
 
 <MudLayout>
     <MudAppBar Elevation="3">
         <MudSpacer />
-        @*<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />*@
         <MudText Typo="Typo.h5" Color="Color.Inherit">Blazor - Todo List</MudText>
         <MudSpacer />
-        @*<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/> *@
     </MudAppBar>
     <MudMainContent>
         @Body

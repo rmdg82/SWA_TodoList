@@ -74,9 +74,9 @@ public partial class Index
     {
         if (!string.IsNullOrEmpty(todoId))
         {
-            OpenDialog();
             TodoIdForUpdate = todoId;
             TodoTextForUpdate = todoText;
+            OpenDialog();
         }
     }
 
