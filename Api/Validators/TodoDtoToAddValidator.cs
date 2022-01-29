@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
-using Shared.Dtos;
+using SharedLibrary;
+using SharedLibrary.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Api.Validators
         {
             RuleFor(x => x.Text)
                 .NotNull()
-                .MaximumLength(25);
+                .MaximumLength(ValidationConstants.maxLengthOnAdd);
         }
     }
 }

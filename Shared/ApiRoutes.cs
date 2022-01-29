@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared
+namespace SharedLibrary
 {
-    public class ApiRoutes
+    public static class ApiRoutesConstants
     {
-        public const string LOCALHOST_DEFAULT_URL = "http://localhost:7071/api/";
-        public const string AZURE_DEFAULT_URL = "";
+        public const string localhost = "http://localhost:7071/api/";
     }
 }

@@ -3,7 +3,7 @@ using Client.HttpRepository;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using Shared;
+using SharedLibrary;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -11,7 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 if (builder.HostEnvironment.IsDevelopment())
 {
-    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(ApiRoutes.LOCALHOST_DEFAULT_URL) });
+    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(ApiRoutesConstants.localhost) });
 }
 else
 {

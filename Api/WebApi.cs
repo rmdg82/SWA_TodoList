@@ -11,11 +11,11 @@ using AutoMapper;
 using Api.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Shared.Dtos;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using System.Net;
 using Api.Validators;
+using SharedLibrary.Dtos;
 
 namespace Api;
 

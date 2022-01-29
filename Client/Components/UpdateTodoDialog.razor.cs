@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Shared.Dtos;
+using SharedLibrary;
+using SharedLibrary.Dtos;
 
 namespace Client.Components
 {
     public partial class UpdateTodoDialog
     {
-        private const int _maxLengthNewTodo = 20;
         private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
 
         [CascadingParameter]
@@ -27,9 +27,9 @@ namespace Client.Components
 
         private static string? CheckMaxLength(string ch)
         {
-            if (!string.IsNullOrWhiteSpace(ch) && ch.Length > _maxLengthNewTodo)
+            if (!string.IsNullOrWhiteSpace(ch) && ch.Length > ValidationConstants.maxLengthOnUpdate)
             {
-                return $"Max {_maxLengthNewTodo} characters";
+                return $"Max {ValidationConstants.maxLengthOnUpdate} characters";
             }
 
             return null;

@@ -13,7 +13,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\Shared\SharedLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

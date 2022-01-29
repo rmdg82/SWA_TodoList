@@ -4,14 +4,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
-using Shared.Dtos;
+using SharedLibrary;
+using SharedLibrary.Dtos;
 
 namespace Client.Pages;
 
 public partial class Index
 {
-    private const int _maxLengthNewTodo = 20;
-
     [Inject]
     public IWebAssemblyHostEnvironment? HostEnvironment { get; set; }
 
@@ -87,11 +86,6 @@ public partial class Index
         await LoadAllTodos();
     }
 
-    public async Task ShowNotImplementedMessage()
-    {
-        await DialogService!.ShowMessageBox("Not implemented", "Method not implemented yet!");
-    }
-
     public async Task DeleteTodo(string todoId)
     {
         await TodoHttpRepository!.DeleteTodo(todoId);
@@ -114,9 +108,9 @@ public partial class Index
 
     private static string? CheckMaxLength(string ch)
     {
-        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > _maxLengthNewTodo)
+        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > ValidationConstants.maxLengthOnAdd)
         {
-            return $"Max {_maxLengthNewTodo} characters";
+            return $"Max {ValidationConstants.maxLengthOnAdd} characters";
         }
 
         return null;

@@ -1,8 +1,8 @@
-﻿using Shared.Dtos;
-using Api.Models;
+﻿using Api.Models;
 using AutoMapper;
 using System;
 using System.Globalization;
+using SharedLibrary.Dtos;
 
 namespace Api.MappingProfiles;
 
