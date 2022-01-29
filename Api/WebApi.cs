@@ -15,6 +15,7 @@ using Shared.Dtos;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using System.Net;
+using Api.Validators;
 
 namespace Api;
 
@@ -107,6 +108,19 @@ public class WebApi
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation($"New request for {nameof(AddTodo)} with body [{requestBody}].");
         var todoToAddDto = JsonSerializer.Deserialize<TodoDtoToAdd>(requestBody);
+
+        var validator = new TodoDtoToAddValidator();
+        var validationResult = validator.Validate(todoToAddDto);
+        if (!validationResult.IsValid)
+        {
+            return new BadRequestObjectResult(
+                validationResult.Errors.Select(x => new
+                {
+                    Field = x.PropertyName,
+                    Error = x.ErrorMessage
+                }));
+        }
+
         var todoToAdd = _mapper.Map<Todo>(todoToAddDto);
         todoToAdd.Id = Guid.NewGuid().ToString();
 
@@ -122,6 +136,53 @@ public class WebApi
         }
 
         return new CreatedAtRouteResult(new { todoId = todoToAdd.Id }, todoToAdd);
+    }
+
+    [FunctionName("UpdateTodo")]
+    public async Task<IActionResult> UpdateTodo([HttpTrigger(AuthorizationLevel.Function, "put", Route = "todos/{todoId}")] HttpRequest req, string todoId)
+    {
+        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        _logger.LogInformation($"New request for {nameof(UpdateTodo)} with id [{todoId}] and body [{requestBody}].");
+        var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
+
+        var validator = new TodoDtoToUpdateValidator();
+        var validationResult = validator.Validate(todoToUpdateDto);
+        if (!validationResult.IsValid)
+        {
+            return new BadRequestObjectResult(
+                validationResult.Errors.Select(x => new
+                {
+                    Field = x.PropertyName,
+                    Error = x.ErrorMessage
+                }));
+        }
+
+        try
+        {
+            await _todoRepository.UpdateAsync(todoId, todoToUpdateDto.Text);
+        }
+        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.NotFound))
+        {
+            _logger.LogError($"Catched exception: [{ex.Message}]");
+            return new NotFoundResult();
+        }
+        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.BadRequest))
+        {
+            _logger.LogError($"Catched exception: [{ex.Message}]");
+            return new BadRequestResult();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogError($"Catched exception: [{ex.Message}]");
+            return new NotFoundObjectResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Catched exception: [{ex.Message}]");
+            return new BadRequestObjectResult(ex.Message);
+        }
+
+        return new NoContentResult();
     }
 
     [FunctionName("CompleteTodo")]
@@ -164,42 +225,6 @@ public class WebApi
         {
             _logger.LogError($"Catched exception: [{ex.Message}]");
             return new BadRequestResult();
-        }
-
-        return new NoContentResult();
-    }
-
-    [FunctionName("UpdateTodo")]
-    public async Task<IActionResult> UpdateTodo([HttpTrigger(AuthorizationLevel.Function, "put", Route = "todos/{todoId}")] HttpRequest req, string todoId)
-    {
-        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        _logger.LogInformation($"New request for {nameof(UpdateTodo)} with id [{todoId}] and body [{requestBody}].");
-
-        var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
-
-        try
-        {
-            await _todoRepository.UpdateAsync(todoId, todoToUpdateDto.Text);
-        }
-        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.NotFound))
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundResult();
-        }
-        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.BadRequest))
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestResult();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundObjectResult(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestObjectResult(ex.Message);
         }
 
         return new NoContentResult();
