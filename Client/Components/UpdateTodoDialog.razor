@@ -1,0 +1,16 @@
+﻿<!-- Update todo dialog -->
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3"/>Update todo
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" @bind-Value="@TodoDto.Text" Counter="20"  Immediate="true" Validation="ValidationFunc">
+        </MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Submit" Variant="Variant.Filled" Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

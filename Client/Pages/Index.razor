@@ -72,7 +72,7 @@
                                             </MudTooltip>
                                         </MudItem>
                                         <MudItem xs="1" md="1">
-                                            <MudIconButton Color="Color.Info" Icon="@Icons.Filled.Create" Size="Size.Large" OnClick="() => UpdateTodo(todo.Id,todo.Text)"> </MudIconButton>
+                                            <MudIconButton Color="Color.Info" Icon="@Icons.Filled.Create" Size="Size.Large" OnClick="() => UpdateTodo(todo)"> </MudIconButton>
                                         </MudItem>
                                         <MudItem xs="1" md="1">
                                             <MudIconButton Color="Color.Error" Icon="@Icons.Filled.Delete" Size="Size.Large" OnClick="() => DeleteTodo(todo.Id)"> </MudIconButton>
@@ -138,28 +138,5 @@
                 <MudButton FullWidth="true" OnClick="ResetDb" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Reset Db</MudButton>
             </MudItem>
         }
-        
     </MudGrid>
 </MudContainer>
-
-
-<!-- Update todo dialog -->
-<MudDialog @bind-IsVisible="isUpdateDialogVisible" Options="new DialogOptions(){ FullWidth=true }">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3"/>Update todo
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <MudTextField T="string" @bind-Value="TodoTextForUpdate" Counter="20"  Immediate="true" Validation="ValidationFunc">
-        </MudTextField>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="CloseDialog">Cancel</MudButton>
-        <MudButton OnClick="Submit" Variant="Variant.Filled" Color="Color.Primary">Ok</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-
-

@@ -1,4 +1,5 @@
-﻿using Client.HttpRepository;
+﻿using Client.Components;
+using Client.HttpRepository;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -25,10 +26,6 @@ public partial class Index
     public string NewTodoText { get; set; } = string.Empty;
 
     private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
-
-    public string? TodoIdForUpdate { get; set; }
-    public string? TodoTextForUpdate { get; set; }
-    public bool isUpdateDialogVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,14 +67,24 @@ public partial class Index
         await LoadAllTodos();
     }
 
-    public void UpdateTodo(string todoId, string todoText)
+    public async Task UpdateTodo(TodoDto todo)
     {
-        if (!string.IsNullOrEmpty(todoId))
+        var parameters = new DialogParameters
         {
-            TodoIdForUpdate = todoId;
-            TodoTextForUpdate = todoText;
-            OpenDialog();
+            ["TodoDto"] = todo
+        };
+
+        var dialog = DialogService!.Show<UpdateTodoDialog>("Update Todo", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            if (result.Data is TodoDto todoDto && !string.IsNullOrEmpty(todoDto.Id) && CheckMaxLength(todoDto.Text) is null)
+            {
+                await TodoHttpRepository!.UpdateTodo(todoDto.Id, new TodoDtoToUpdate(todoDto.Text!));
+            }
         }
+        await LoadAllTodos();
     }
 
     public async Task ShowNotImplementedMessage()
@@ -113,19 +120,5 @@ public partial class Index
         }
 
         return null;
-    }
-
-    private void OpenDialog() => isUpdateDialogVisible = true;
-
-    private void CloseDialog() => isUpdateDialogVisible = false;
-
-    private async Task Submit()
-    {
-        if (!string.IsNullOrWhiteSpace(TodoIdForUpdate) && !string.IsNullOrWhiteSpace(TodoTextForUpdate) && CheckMaxLength(TodoTextForUpdate) is null)
-        {
-            await TodoHttpRepository!.UpdateTodo(TodoIdForUpdate!, new TodoDtoToUpdate(TodoTextForUpdate!));
-        }
-        CloseDialog();
-        await LoadAllTodos();
     }
 }

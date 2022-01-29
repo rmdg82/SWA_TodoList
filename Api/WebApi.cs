@@ -175,11 +175,6 @@ public class WebApi
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation($"New request for {nameof(UpdateTodo)} with id [{todoId}] and body [{requestBody}].");
 
-        //var originalTodo = await _todoRepository.GetByIdAsync(todoId);
-        //if (originalTodo == null)
-        //{
-        //    return new NotFoundObjectResult($"Todo with id {todoId} not found");
-        //}
         var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
 
         try
