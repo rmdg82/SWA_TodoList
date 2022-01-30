@@ -18,6 +18,9 @@ public partial class Index
     public IDialogService? DialogService { get; set; }
 
     [Inject]
+    public ISnackbar SnackbarService { get; set; }
+
+    [Inject]
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
 
     public IEnumerable<TodoDto>? AllTodos { get; set; }
@@ -68,6 +71,8 @@ public partial class Index
 
     public async Task UpdateTodo(TodoDto todo)
     {
+        // Save the old text value in order to reset it on the case update is not performed
+        var oldValue = todo.Text;
         var parameters = new DialogParameters
         {
             ["TodoDto"] = todo
@@ -82,13 +87,17 @@ public partial class Index
             {
                 await TodoHttpRepository!.UpdateTodo(todoDto.Id, new TodoDtoToUpdate(todoDto.Text!));
             }
+            else
+            {
+                todo.Text = oldValue;
+            }
         }
-        await LoadAllTodos();
     }
 
     public async Task DeleteTodo(string todoId)
     {
         await TodoHttpRepository!.DeleteTodo(todoId);
+        SnackbarService.Add("Todo deleted!", Severity.Success);
         await LoadAllTodos();
     }
 
