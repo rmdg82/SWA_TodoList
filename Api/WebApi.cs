@@ -32,19 +32,19 @@ public class WebApi
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    [FunctionName("InitializeDb")]
-    public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "initDb")] HttpRequest req)
-    {
-        _logger.LogInformation("Initialize Db with fake data.");
-        var result = await _todoRepository.InitializeDbDataIfEmpty();
+    //[FunctionName("InitializeDb")]
+    //public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "initDb")] HttpRequest req)
+    //{
+    //    _logger.LogInformation("Initialize Db with fake data.");
+    //    var result = await _todoRepository.InitializeDbDataIfEmpty();
 
-        if (result)
-        {
-            return new OkResult();
-        }
+    //    if (result)
+    //    {
+    //        return new OkResult();
+    //    }
 
-        return new NoContentResult();
-    }
+    //    return new NoContentResult();
+    //}
 
     [FunctionName("ResetDb")]
     public async Task<IActionResult> ResetDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "resetDb")] HttpRequest req)
@@ -86,8 +86,8 @@ public class WebApi
         return new OkObjectResult(todosDto);
     }
 
-    [FunctionName("GetTodosById")]
-    public async Task<ActionResult<Todo>> GetTodoById([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
+    [FunctionName("GetTodoById")]
+    public async Task<ActionResult<TodoDto>> GetTodoById([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
     {
         _logger.LogInformation($"New request for {nameof(GetTodoById)} with id [{todoId}].");
 
@@ -126,7 +126,6 @@ public class WebApi
 
         try
         {
-            _logger.LogInformation($"Added Todo with id: {todoToAdd.Id} text: {todoToAdd.Text}");
             await _todoRepository.AddAsync(todoToAdd);
         }
         catch (Exception ex)
@@ -135,6 +134,7 @@ public class WebApi
             return new BadRequestResult();
         }
 
+        _logger.LogInformation($"Added Todo with id: {todoToAdd.Id} text: {todoToAdd.Text}");
         return new CreatedAtRouteResult(new { todoId = todoToAdd.Id }, todoToAdd);
     }
 
