@@ -11,6 +11,7 @@ using Moq;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using Client.HttpRepository;
+using Microsoft.AspNetCore.Components;
 
 namespace Client.Tests.Pages
 {
@@ -40,10 +41,19 @@ namespace Client.Tests.Pages
             ctx.Services.AddSingleton(_mockITodoHttpRepository.Object);
             var component = ctx.RenderComponent<Client.Pages.Index>();
 
-            component.Find("input").TextContent = "new todo1";
+            var input = component.Find("input");
+            input.Change("new todo1");
+
             component.Find("button").Click();
 
-            component.MarkupMatches("");
+            var todoList = component.Find("#list-todo-card");
+
+            var firstTodo = todoList.ChildNodes[0];
+
+            int todos = todoList.ChildElementCount;
+            Assert.Equal(3, todos);
+            //component.Find("h3").MarkupMatches("<h3 class=\"mud-typography mud-typography-h3 mud-warning-text mud-typography-align-left\">Todo list</h3>");
+            //Assert.Equal(4, component.Find(".mud-card-content").ChildElementCount);
         }
     }
 }
