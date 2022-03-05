@@ -27,9 +27,9 @@ jobs:
         with:
             dotnet-version: "6.0.x"
       - name: Run API tests
-        run: dotnet test --verbosity normal ${{ env.APITestsFolderName }}
+        run: dotnet test --verbosity minimal ${{ env.APITestsFolderName }}
       - name: Run Client tests
-        run: dotnet test --verbosity normal ${{ env.ClientTestsFolderName }}
+        run: dotnet test --verbosity minimal ${{ env.ClientTestsFolderName }}
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
