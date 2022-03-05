@@ -319,12 +319,6 @@ namespace Api.Tests
             _mockedTodoRepository.Verify(x => x.DeleteAsync(_existingTodoId), Times.Once());
         }
 
-        [Fact]
-        public void TestToFail()
-        {
-            Assert.True(false);
-        }
-
         private static HttpRequest CreateHttpRequest(string method, QueryString? queryStrings = null, string? body = null)
         {
             var context = new DefaultHttpContext();
