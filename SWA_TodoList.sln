@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedLibrary", "Shared\SharedLibrary.csproj", "{73AFEBE1-2819-40B3-96F5-01CBBD9AADF6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA565287-C3A6-4DD4-ADE4-33E11F196DDC}"
+	ProjectSection(SolutionItems) = preProject
+		SwaStart.ps1 = SwaStart.ps1
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{7794C05C-904E-4B2F-86BF-F4AF62485E51}"
 EndProject
@@ -22,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4D4B3049
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Tests", "Tests\Api.Tests\Api.Tests.csproj", "{E5C41375-2F37-4A9D-8168-34D86378395E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Tests", "Tests\Client.Tests\Client.Tests.csproj", "{2AEA0FE9-AE13-4780-9993-D0BC27D5928B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client.Tests", "Tests\Client.Tests\Client.Tests.csproj", "{2AEA0FE9-AE13-4780-9993-D0BC27D5928B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
