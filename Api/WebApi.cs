@@ -32,22 +32,8 @@ public class WebApi
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    //[FunctionName("InitializeDb")]
-    //public async Task<IActionResult> InitializeDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "initDb")] HttpRequest req)
-    //{
-    //    _logger.LogInformation("Initialize Db with fake data.");
-    //    var result = await _todoRepository.InitializeDbDataIfEmpty();
-
-    //    if (result)
-    //    {
-    //        return new OkResult();
-    //    }
-
-    //    return new NoContentResult();
-    //}
-
     [FunctionName("ResetDb")]
-    public async Task<IActionResult> ResetDb([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "resetDb")] HttpRequest req)
+    public async Task<IActionResult> ResetDb([HttpTrigger(AuthorizationLevel.Function, "post", Route = "resetDb")] HttpRequest req)
     {
         _logger.LogInformation("Reset Db with fake data.");
         await _todoRepository.ResetDb();
@@ -56,7 +42,7 @@ public class WebApi
     }
 
     [FunctionName("GetAllTodos")]
-    public async Task<ActionResult<IEnumerable<TodoDto>>> GetTodos([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "todos")] HttpRequest req)
+    public async Task<ActionResult<IEnumerable<TodoDto>>> GetTodos([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos")] HttpRequest req)
     {
         var queryParams = req.QueryString;
         var getOnlyUncompleted = req.Query["onlyUncompleted"];
@@ -87,7 +73,7 @@ public class WebApi
     }
 
     [FunctionName("GetTodoById")]
-    public async Task<ActionResult<TodoDto>> GetTodoById([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
+    public async Task<ActionResult<TodoDto>> GetTodoById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
     {
         _logger.LogInformation($"New request for {nameof(GetTodoById)} with id [{todoId}].");
 
