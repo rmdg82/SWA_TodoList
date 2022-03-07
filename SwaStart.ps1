@@ -1,6 +1,7 @@
 ﻿# Script to start SWA CLI in order to test authentication/authorization
 
-$SwaUrl = "http://localhost:5260"
+$FeUrl = "http://localhost:5260"
+$SwaUrl = "http://localhost:4280"
 
 # Go to project
 Set-Location "C:\Users\esz42romdigr\source\repos\rmdg82\SWA_TodoList"
@@ -9,7 +10,7 @@ Set-Location "C:\Users\esz42romdigr\source\repos\rmdg82\SWA_TodoList"
 dotnet run watch --project .\Client\Client.csproj &
 
 # Start swa
-swa start $SwaUrl --api-location .\Api &
+swa start $FeUrl --api-location .\Api &
 
 # Start be
 #func host start --script-root .\Api\ &
