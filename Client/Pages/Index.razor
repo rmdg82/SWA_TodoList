@@ -134,9 +134,11 @@
             </MudCard>
         </MudItem>
         <MudItem xs="12">
-            <MudButton Link="/.auth/login/github" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Custom.Brands.GitHub">Login</MudButton>
-            <MudButton Link="/.auth/logout" Color="Color.Secondary" Variant="Variant.Outlined" EndIcon="@Icons.Custom.Brands.GitHub">Logout</MudButton>
-            <MudButton Link="/.auth/me" Color="Color.Tertiary" Variant="Variant.Text" EndIcon="@Icons.Custom.Brands.GitHub">Show User data</MudButton>
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                <MudButton Link="/.auth/login/github"   EndIcon="@Icons.Custom.Brands.GitHub">Login</MudButton>
+                <MudButton Link="/.auth/logout"   EndIcon="@Icons.Custom.Brands.GitHub">Logout</MudButton>
+                <MudButton Link="/.auth/me"  EndIcon="@Icons.Custom.Brands.GitHub">Show User data</MudButton>
+            </MudButtonGroup>
         </MudItem>
         
         @if(HostEnvironment!.Environment == "Development")
