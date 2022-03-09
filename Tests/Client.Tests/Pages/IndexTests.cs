@@ -53,6 +53,7 @@ namespace Client.Tests.Pages
             int todos = todoList.ChildElementCount;
 
             //Assert.Equal(3, todos);
+
             Assert.True(true);
 
             //component.Find("h3").MarkupMatches("<h3 class=\"mud-typography mud-typography-h3 mud-warning-text mud-typography-align-left\">Todo list</h3>");
