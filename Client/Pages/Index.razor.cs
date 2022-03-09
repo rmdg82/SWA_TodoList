@@ -42,8 +42,9 @@ public partial class Index
     {
         var client = new HttpClient();
         var response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
+        identity = response?.ClientPrincipal?.UserId ?? "No response";
+
         //identity = JsonSerializer.Serialize(response);
-        identity = response.ClientPrincipal.UserId;
         //identity = await response.Content.ReadAsStringAsync();
     }
 
