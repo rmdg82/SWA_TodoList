@@ -41,7 +41,7 @@ public partial class Index
     public async Task GetIdentity()
     {
         var client = new HttpClient();
-        var response = await client.GetFromJsonAsync<IdentityDto>(".auth/me");
+        var response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
         //identity = JsonSerializer.Serialize(response);
         identity = response.ClientPrincipal.UserId;
         //identity = await response.Content.ReadAsStringAsync();
