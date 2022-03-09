@@ -16,6 +16,7 @@ using Microsoft.Azure.Cosmos;
 using System.Net;
 using Api.Validators;
 using SharedLibrary.Dtos;
+using System.Text;
 
 namespace Api;
 
@@ -30,6 +31,17 @@ public class WebApi
         _todoRepository = todoRepository ?? throw new ArgumentNullException(nameof(todoRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    }
+
+    [FunctionName("Hello")]
+    public async Task<IActionResult> Hello(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hello")] HttpRequest req)
+    {
+        _logger.LogInformation("Hello called!");
+        var header = req.Headers["x-ms-client-principal"].First();
+        var payload = Encoding.UTF8.GetString(Convert.FromBase64String(header));
+
+        return new OkObjectResult(payload);
     }
 
     [FunctionName("ResetDb")]

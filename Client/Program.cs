@@ -2,6 +2,7 @@ using Client;
 using Client.HttpRepository;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Azure.Functions.Authentication.WebAssembly;
 using MudBlazor;
 using MudBlazor.Services;
 using SharedLibrary;
@@ -20,6 +21,8 @@ else
 }
 
 builder.Services.AddScoped<ITodoHttpRepository, TodoHttpRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddStaticWebAppsAuthentication();
 
 builder.Services.AddMudServices(config =>
 {

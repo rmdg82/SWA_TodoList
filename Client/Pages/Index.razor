@@ -7,6 +7,14 @@
 <MudContainer Class="mt-10 mb-10">
     
     <MudGrid>
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudButton OnClick="GetIdentity">Call api Identity</MudButton>
+                    <MudText >@identity</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
         <!-- Add todo card -->
         <MudItem xs="12" >
@@ -134,7 +142,7 @@
             </MudCard>
         </MudItem>
         <MudItem xs="12">
-            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+            <MudButtonGroup Color="Color.Secondary" Variant="Variant.Outlined">
                 <MudButton Link="/.auth/login/github"   EndIcon="@Icons.Custom.Brands.GitHub">Login</MudButton>
                 <MudButton Link="/.auth/logout"   EndIcon="@Icons.Custom.Brands.GitHub">Logout</MudButton>
                 <MudButton Link="/.auth/me"  EndIcon="@Icons.Custom.Brands.GitHub">Show User data</MudButton>

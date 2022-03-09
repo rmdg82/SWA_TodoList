@@ -6,11 +6,16 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using SharedLibrary;
 using SharedLibrary.Dtos;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Client.Pages;
 
 public partial class Index
 {
+    //[Inject]
+    //public IAuthRepository? AuthRepository { get; set; }
+
     [Inject]
     public IWebAssemblyHostEnvironment? HostEnvironment { get; set; }
 
@@ -23,15 +28,29 @@ public partial class Index
     [Inject]
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
 
+    [Inject]
+    public HttpClient HttpClient { get; set; }
+
     public IEnumerable<TodoDto>? AllTodos { get; set; }
 
     public string NewTodoText { get; set; } = string.Empty;
+
+    public string identity = string.Empty;
 
     private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAllTodos();
+    }
+
+    public async Task GetIdentity()
+    {
+        var client = new HttpClient();
+        var response = await HttpClient.GetFromJsonAsync<IdentityDto>("http://localhost:4280/.auth/me");
+        //identity = JsonSerializer.Serialize(response);
+        identity = response.ClientPrincipal.UserId;
+        //identity = await response.Content.ReadAsStringAsync();
     }
 
     public async Task AddTodo()
