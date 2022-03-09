@@ -1,17 +1,8 @@
-﻿using Bunit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Client.Pages;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Xunit;
 using Moq;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using Client.HttpRepository;
-using Microsoft.AspNetCore.Components;
 
 namespace Client.Tests.Pages
 {

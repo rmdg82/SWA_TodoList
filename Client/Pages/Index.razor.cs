@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using SharedLibrary;
 using SharedLibrary.Dtos;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Client.Pages;
@@ -20,13 +19,13 @@ public partial class Index
     public IDialogService? DialogService { get; set; }
 
     [Inject]
-    public ISnackbar SnackbarService { get; set; }
+    public ISnackbar? SnackbarService { get; set; }
 
     [Inject]
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
 
     [Inject]
-    public IAuthRepository AuthRepository { get; set; }
+    public IAuthRepository? AuthRepository { get; set; }
 
     public IEnumerable<TodoDto>? AllTodos { get; set; }
 
@@ -43,28 +42,13 @@ public partial class Index
 
     public async Task GetIdentity()
     {
-        var response = await AuthRepository.GetIdentity();
+        var response = await AuthRepository!.GetIdentity();
         if (response == null)
         {
             identity = "Response null";
         }
 
         identity = JsonSerializer.Serialize(response);
-
-        //var client = new HttpClient();
-        //IdentityDto? response = null;
-        //try
-        //{
-        //    response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
-        //}
-        //catch (Exception ex)
-        //{
-        //    identity = $"We had exception {ex.Message}";
-        //}
-
-        //identity = response?.ClientPrincipal?.UserId ?? "No response";
-
-        //identity = JsonSerializer.Serialize(response);
     }
 
     public async Task AddTodo()
