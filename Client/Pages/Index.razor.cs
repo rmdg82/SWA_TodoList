@@ -13,9 +13,6 @@ namespace Client.Pages;
 
 public partial class Index
 {
-    //[Inject]
-    //public IAuthRepository? AuthRepository { get; set; }
-
     [Inject]
     public IWebAssemblyHostEnvironment? HostEnvironment { get; set; }
 
@@ -27,9 +24,6 @@ public partial class Index
 
     [Inject]
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
-
-    [Inject]
-    public HttpClient HttpClient { get; set; }
 
     public IEnumerable<TodoDto>? AllTodos { get; set; }
 
