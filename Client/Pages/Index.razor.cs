@@ -41,7 +41,16 @@ public partial class Index
     public async Task GetIdentity()
     {
         var client = new HttpClient();
-        var response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
+        IdentityDto? response = null;
+        try
+        {
+            response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
+        }
+        catch (Exception ex)
+        {
+            identity = $"We had exception {ex.Message}";
+        }
+
         identity = response?.ClientPrincipal?.UserId ?? "No response";
 
         //identity = JsonSerializer.Serialize(response);
