@@ -25,6 +25,9 @@ public partial class Index
     [Inject]
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
 
+    [Inject]
+    public IAuthRepository AuthRepository { get; set; }
+
     public IEnumerable<TodoDto>? AllTodos { get; set; }
 
     public string NewTodoText { get; set; } = string.Empty;
@@ -40,21 +43,28 @@ public partial class Index
 
     public async Task GetIdentity()
     {
-        var client = new HttpClient();
-        IdentityDto? response = null;
-        try
+        var response = await AuthRepository.GetIdentity();
+        if (response == null)
         {
-            response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
-        }
-        catch (Exception ex)
-        {
-            identity = $"We had exception {ex.Message}";
+            identity = "Response null";
         }
 
-        identity = response?.ClientPrincipal?.UserId ?? "No response";
+        identity = JsonSerializer.Serialize(response);
+
+        //var client = new HttpClient();
+        //IdentityDto? response = null;
+        //try
+        //{
+        //    response = await client.GetFromJsonAsync<IdentityDto>("/.auth/me");
+        //}
+        //catch (Exception ex)
+        //{
+        //    identity = $"We had exception {ex.Message}";
+        //}
+
+        //identity = response?.ClientPrincipal?.UserId ?? "No response";
 
         //identity = JsonSerializer.Serialize(response);
-        //identity = await response.Content.ReadAsStringAsync();
     }
 
     public async Task AddTodo()

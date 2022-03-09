@@ -13,14 +13,14 @@ namespace Client.HttpRepository
     {
         private readonly HttpClient _httpClient;
 
-        public AuthRepository()
+        public AuthRepository(HttpClient httpClient)
         {
-            _httpClient = new HttpClient();
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public async Task<ClientPrincipalDto?> GetClaimsIdentity()
+        public async Task<IdentityDto?> GetIdentity()
         {
-            return await _httpClient.GetFromJsonAsync<ClientPrincipalDto>(".auth/me");
+            return await _httpClient.GetFromJsonAsync<IdentityDto>("/.auth/me");
         }
     }
 }

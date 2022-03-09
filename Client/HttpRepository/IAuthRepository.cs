@@ -10,6 +10,6 @@ namespace Client.HttpRepository
 {
     public interface IAuthRepository
     {
-        Task<ClientPrincipalDto?> GetClaimsIdentity();
+        Task<IdentityDto?> GetIdentity();
     }
 }
