@@ -1,5 +1,16 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html"
-  }
+  },
+  "routes": [
+    {
+      "route": "/.auth/login/twitter",
+      "statusCode": 404
+    },
+    {
+      "route": "/api/todos",
+      "methods": [ "GET" ],
+      "allowedRoles": [ "authenticated" ]
+    }
+  ]
 }
