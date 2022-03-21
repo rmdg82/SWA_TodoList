@@ -1,0 +1,25 @@
+﻿@page "/login"
+
+
+<PageTitle>Todo List - Login</PageTitle>
+
+<MudContainer Class="mt-10 mb-10">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudText Typo="Typo.h1">Login</MudText>
+                    <MudForm>
+                        <MudTextField T="string" Label="Username" />
+                        <MudTextField T="string" Label="Password" />
+                        <br />
+                        @foreach(var provider in Providers)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Link="@GetProviderLink(provider)" >Login with @provider</MudButton>
+                        }
+                    </MudForm>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
