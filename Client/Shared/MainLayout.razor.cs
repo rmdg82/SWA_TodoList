@@ -15,10 +15,15 @@ namespace Client.Shared
         public IAuthRepository? AuthRepository { get; set; }
 
         public IdentityDto? IdentityDto { get; set; }
+        private bool _isAuthenticated;
 
         protected override async Task OnInitializedAsync()
         {
             IdentityDto = await AuthRepository!.GetIdentity();
+            if (IdentityDto != null)
+            {
+                _isAuthenticated = true;
+            }
         }
     }
 }

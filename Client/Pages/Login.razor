@@ -1,23 +1,32 @@
 ﻿@page "/login"
 
-
 <PageTitle>Todo List - Login</PageTitle>
-
 <MudContainer Class="mt-10 mb-10">
     <MudGrid>
         <MudItem xs="12">
-            <MudCard>
+            <MudCard Elevation="3" >
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudGrid>
+                            <MudItem md="1" >
+                                <MudIcon Icon="@Icons.TwoTone.Login" Style="font-size: 4rem;" Color="Color.Primary"/> 
+                            </MudItem>
+                            <MudItem md="11" >
+                                <MudText Align="Align.Start" Typo="Typo.h3" Color="Color.Primary">Login</MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.Middle" />
                 <MudCardContent>
-                    <MudText Typo="Typo.h1">Login</MudText>
-                    <MudForm>
-                        <MudTextField T="string" Label="Username" />
-                        <MudTextField T="string" Label="Password" />
-                        <br />
-                        @foreach(var provider in Providers)
-                        {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Link="@GetProviderLink(provider)" >Login with @provider</MudButton>
-                        }
-                    </MudForm>
+                    <MudGrid>
+                        <MudItem>
+                            <MudButton Link="/.auth/login/github" StartIcon="@Icons.Custom.Brands.GitHub" Variant="Variant.Filled" Color="Color.Transparent" Size="Size.Large">Login with GitHub</MudButton>
+                        </MudItem>
+                        <MudItem>
+                            <MudButton Link="/.auth/login/aad" StartIcon="@Icons.Custom.Brands.Microsoft" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Microsoft</MudButton>
+                        </MudItem>
+                    </MudGrid>
                 </MudCardContent>
             </MudCard>
         </MudItem>

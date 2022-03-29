@@ -114,7 +114,7 @@ public partial class Index
     public async Task DeleteTodo(string todoId)
     {
         await TodoHttpRepository!.DeleteTodo(todoId);
-        SnackbarService.Add("Todo deleted!", Severity.Success);
+        SnackbarService!.Add("Todo deleted!", Severity.Success);
         await LoadAllTodos();
     }
 
@@ -122,7 +122,6 @@ public partial class Index
     {
         await TodoHttpRepository!.ResetDb();
         AllTodos = await TodoHttpRepository.GetTodos();
-
         StateHasChanged();
     }
 

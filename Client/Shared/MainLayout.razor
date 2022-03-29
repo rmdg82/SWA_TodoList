@@ -9,7 +9,11 @@
         <MudSpacer />
         <MudText Typo="Typo.h5" Color="Color.Inherit">Blazor - Todo List</MudText>
         <MudSpacer />
-        <MudText Typo="Typo.h5" Color="Color.Inherit">@(IdentityDto?.ClientPrincipal?.UserDetails ?? "not authorized")</MudText>
+        @if (_isAuthenticated)
+        {
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github"></MudIconButton>
+            <MudText Typo="Typo.h5" Color="Color.Inherit">@(IdentityDto?.ClientPrincipal?.UserDetails)</MudText>
+        }
     </MudAppBar>
     <MudMainContent>
         @Body
