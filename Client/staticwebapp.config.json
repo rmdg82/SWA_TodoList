@@ -4,12 +4,8 @@
   },
   "routes": [
     {
-      "route": "/.auth/login/twitter",
-      "statusCode": 404
-    },
-    {
       "route": "/api/todos",
-      "methods": [ "GET" ],
+      "methods": [ "GET", "POST" ],
       "allowedRoles": [ "authenticated" ]
     }
   ]

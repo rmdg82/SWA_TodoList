@@ -1,5 +1,8 @@
 ﻿@page "/login"
+@page "/"
+@using Microsoft.AspNetCore.Authorization
 
+@attribute [AllowAnonymous]
 <PageTitle>Todo List - Login</PageTitle>
 <MudContainer Class="mt-10 mb-10">
     <MudGrid>
@@ -25,6 +28,9 @@
                         </MudItem>
                         <MudItem>
                             <MudButton Link="/.auth/login/aad" StartIcon="@Icons.Custom.Brands.Microsoft" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Microsoft</MudButton>
+                        </MudItem>
+                        <MudItem>
+                            <MudButton Link="/.auth/login/twitter" StartIcon="@Icons.Custom.Brands.Twitter" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Twitter</MudButton>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>

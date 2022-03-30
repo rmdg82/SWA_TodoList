@@ -1,7 +1,9 @@
 ﻿@page "/"
 @page "/index"
 @using SharedLibrary
+@using Microsoft.AspNetCore.Authorization
 
+@attribute [Authorize]
 <PageTitle>Blazor - Todo List</PageTitle>
 
 <MudContainer Class="mt-10 mb-10">

@@ -6,6 +6,7 @@ namespace Client.HttpRepository
     public class AuthRepository : IAuthRepository
     {
         private readonly HttpClient _httpClient;
+        public string[] Providers { get; } = { "aad", "github", "twitter" };
 
         public AuthRepository(HttpClient httpClient)
         {
@@ -14,7 +15,14 @@ namespace Client.HttpRepository
 
         public async Task<IdentityDto?> GetIdentity()
         {
-            return await _httpClient.GetFromJsonAsync<IdentityDto>("/.auth/me");
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<IdentityDto>("/.auth/me");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
