@@ -12,8 +12,8 @@ namespace Client.Pages
 
         public static string GetProviderLink(string provider) => $"/.auth/login/{provider}";
 
-        public string LoginWithGitHub()
-        {
-        }
+        //public string LoginWithGitHub()
+        //{
+        //}
     }
 }
