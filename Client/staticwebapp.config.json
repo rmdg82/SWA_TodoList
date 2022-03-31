@@ -4,8 +4,8 @@
   },
   "routes": [
     {
-      "route": "/api/todos",
-      "methods": [ "GET", "POST" ],
+      "route": "/api/todos/*",
+      "methods": [ "GET", "POST", "PUT", "DELETE" ],
       "allowedRoles": [ "authenticated" ]
     }
   ]

@@ -11,7 +11,7 @@ namespace Client.Shared
 
         public IdentityDto? IdentityDto { get; set; }
         private bool _isAuthenticated;
-        private string _icon;
+        private string _icon = "@Icons.TwoTone.Person";
 
         protected override async Task OnInitializedAsync()
         {
@@ -37,6 +37,8 @@ namespace Client.Shared
                         break;
                 }
             }
+
+            StateHasChanged();
         }
     }
 }
