@@ -8,7 +8,7 @@
     <MudAppBar Elevation="3">
         @if (_isAuthenticated)
         {
-            <MudIconButton Icon="@Icons.TwoTone.Person" Color="Color.Inherit"></MudIconButton>
+            <MudIconButton Icon="@_icon" Color="Color.Inherit"></MudIconButton>
             <MudText Typo="Typo.h5" Color="Color.Inherit">@(IdentityDto?.ClientPrincipal?.UserDetails)</MudText>
         }
         <MudSpacer />

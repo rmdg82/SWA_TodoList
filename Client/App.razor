@@ -2,19 +2,13 @@
     <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
-            <Authorizing>
-                <text>Verifing user...</text>
-            </Authorizing>
             <NotAuthorized>
                 <Client.Pages.Login/>
             </NotAuthorized>
         </AuthorizeRouteView>
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
+        <Client.Pages.NotFound/>
     </NotFound>
 </Router>
 </CascadingAuthenticationState>

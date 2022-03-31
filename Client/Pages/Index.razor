@@ -4,9 +4,7 @@
 
 @attribute [Authorize]
 <PageTitle>Blazor - Todo List</PageTitle>
-
 <MudContainer Class="mt-10 mb-10">
-    
     <MudGrid>
         <!-- Add todo card -->
         <MudItem xs="12" >
@@ -134,13 +132,13 @@
             </MudCard>
         </MudItem>
 
-        <MudItem xs="12">
+        @*<MudItem xs="12">
             <MudButtonGroup Color="Color.Secondary" Variant="Variant.Outlined">
                 <MudButton Link="/.auth/login/github"   EndIcon="@Icons.Custom.Brands.GitHub">Login</MudButton>
                 <MudButton Link="/.auth/logout"   EndIcon="@Icons.Custom.Brands.GitHub">Logout</MudButton>
                 <MudButton Link="/.auth/me"  EndIcon="@Icons.Custom.Brands.GitHub">Show User data</MudButton>
             </MudButtonGroup>
-        </MudItem>
+        </MudItem>*@
         
         @if(HostEnvironment!.Environment == "Development")
         {

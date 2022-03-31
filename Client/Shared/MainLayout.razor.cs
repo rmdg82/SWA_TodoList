@@ -1,5 +1,6 @@
 ﻿using Client.HttpRepository;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using SharedLibrary.Dtos;
 
 namespace Client.Shared
@@ -11,7 +12,7 @@ namespace Client.Shared
 
         public IdentityDto? IdentityDto { get; set; }
         private bool _isAuthenticated;
-        private string _icon = @"@Icons.TwoTone.Person";
+        private string _icon = Icons.TwoTone.Person;
 
         protected override async Task OnInitializedAsync()
         {
@@ -22,15 +23,15 @@ namespace Client.Shared
                 switch (IdentityDto.ClientPrincipal.IdentityProvider)
                 {
                     case "github":
-                        _icon = @"@Icons.Custom.Brands.GitHub";
+                        _icon = Icons.Custom.Brands.GitHub;
                         break;
 
                     case "aad":
-                        _icon = @"@Icons.Custom.Brands.Microsoft";
+                        _icon = Icons.Custom.Brands.Microsoft;
                         break;
 
                     case "twitter":
-                        _icon = @"@Icons.Custom.Brands.Twitter";
+                        _icon = Icons.Custom.Brands.Twitter;
                         break;
 
                     default:
