@@ -38,8 +38,6 @@ namespace Client.Shared
                         break;
                 }
             }
-
-            StateHasChanged();
         }
     }
 }
