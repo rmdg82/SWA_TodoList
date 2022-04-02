@@ -10,15 +10,11 @@
         {
             <MudIconButton Icon="@_icon" Color="Color.Inherit"></MudIconButton>
             <MudText Typo="Typo.h5" Color="Color.Inherit">@(IdentityDto?.ClientPrincipal?.UserDetails)</MudText>
+            <MudIconButton Link="/.auth/logout" Icon="@Icons.Material.TwoTone.Logout" Color="Color.Inherit"></MudIconButton>
         }
         <MudSpacer />
         <MudText Typo="Typo.h5" Color="Color.Inherit">Blazor - Todo List</MudText>
         <MudSpacer />
-        @if (_isAuthenticated)
-        {
-            <MudIconButton Link="/.auth/logout" Icon="@Icons.Material.TwoTone.Logout" Color="Color.Inherit"></MudIconButton>
-            <MudText Typo="Typo.h5" Color="Color.Inherit">Logout</MudText>
-        }
     </MudAppBar>
     <MudMainContent>
         @Body
