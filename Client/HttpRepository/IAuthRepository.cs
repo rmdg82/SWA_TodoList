@@ -1,11 +1,12 @@
 ﻿using SharedLibrary.Dtos;
 
-namespace Client.HttpRepository
-{
-    public interface IAuthRepository
-    {
-        string[] Providers { get; }
+namespace Client.HttpRepository;
 
-        Task<IdentityDto?> GetIdentity();
-    }
+public interface IAuthRepository
+{
+    string[] Providers { get; }
+
+    Task<IdentityDto?> GetIdentity();
+
+    Task<IdentityDto?> GetIdentityFromHeaders();
 }

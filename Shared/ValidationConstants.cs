@@ -1,8 +1,7 @@
-﻿namespace SharedLibrary
+﻿namespace SharedLibrary;
+
+public class ValidationConstants
 {
-    public class ValidationConstants
-    {
-        public const int maxLengthOnAdd = 20;
-        public const int maxLengthOnUpdate = 20;
-    }
+    public const int maxLengthOnAdd = 20;
+    public const int maxLengthOnUpdate = 20;
 }

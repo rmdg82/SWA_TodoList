@@ -1,7 +1,6 @@
-﻿namespace SharedLibrary
+﻿namespace SharedLibrary;
+
+public static class ApiRoutesConstants
 {
-    public static class ApiRoutesConstants
-    {
-        public const string localhost = "http://localhost:7071/";
-    }
+    public const string localhost = "http://localhost:7071/";
 }

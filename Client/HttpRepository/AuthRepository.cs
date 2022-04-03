@@ -1,28 +1,39 @@
 ﻿using SharedLibrary.Dtos;
 using System.Net.Http.Json;
 
-namespace Client.HttpRepository
+namespace Client.HttpRepository;
+
+public class AuthRepository : IAuthRepository
 {
-    public class AuthRepository : IAuthRepository
+    private readonly HttpClient _httpClient;
+    public string[] Providers { get; } = { "aad", "github", "twitter" };
+
+    public AuthRepository(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
-        public string[] Providers { get; } = { "aad", "github", "twitter" };
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
 
-        public AuthRepository(HttpClient httpClient)
+    public async Task<IdentityDto?> GetIdentity()
+    {
+        try
         {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            return await _httpClient.GetFromJsonAsync<IdentityDto>("/.auth/me");
         }
-
-        public async Task<IdentityDto?> GetIdentity()
+        catch (Exception)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<IdentityDto>("/.auth/me");
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return null;
+        }
+    }
+
+    public async Task<IdentityDto?> GetIdentityFromHeaders()
+    {
+        try
+        {
+            return await _httpClient.GetFromJsonAsync<IdentityDto>("/identity");
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 }
