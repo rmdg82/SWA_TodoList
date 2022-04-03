@@ -24,16 +24,4 @@ public class AuthRepository : IAuthRepository
             return null;
         }
     }
-
-    public async Task<IdentityDto?> GetIdentityFromHeaders()
-    {
-        try
-        {
-            return await _httpClient.GetFromJsonAsync<IdentityDto>("/identity");
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-    }
 }

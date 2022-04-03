@@ -12,6 +12,9 @@ public partial class MainLayout
     public IAuthRepository? AuthRepository { get; set; }
 
     [Inject]
+    public ITestRepository? TestRepository { get; set; }
+
+    [Inject]
     public IDialogService? DialogService { get; set; }
 
     public IdentityDto? IdentityDto { get; set; }
@@ -46,7 +49,7 @@ public partial class MainLayout
 
     public async Task GetIdentityFromHeaders()
     {
-        var result = await AuthRepository!.GetIdentityFromHeaders();
+        var result = await TestRepository!.GetHelloWorld();
         await DialogService!.ShowMessageBox("Identity From Headers", JsonSerializer.Serialize(result));
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace SharedLibrary.Dtos
+﻿namespace SharedLibrary.Dtos;
+
+public class IdentityDto
 {
-    public class IdentityDto
-    {
-        public ClientPrincipalDto? ClientPrincipal { get; set; }
-    }
+    public ClientPrincipalDto? ClientPrincipal { get; set; }
 }

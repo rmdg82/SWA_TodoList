@@ -22,6 +22,7 @@ else
 
 builder.Services.AddScoped<ITodoHttpRepository, TodoHttpRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<ITestRepository, TestRepository>();
 builder.Services.AddStaticWebAppsAuthentication();
 
 builder.Services.AddMudServices(config =>

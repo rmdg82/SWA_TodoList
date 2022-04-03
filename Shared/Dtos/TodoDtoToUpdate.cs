@@ -1,15 +1,14 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SharedLibrary.Dtos
-{
-    public class TodoDtoToUpdate
-    {
-        [JsonPropertyName("text")]
-        public string Text { get; set; }
+namespace SharedLibrary.Dtos;
 
-        public TodoDtoToUpdate(string text)
-        {
-            Text = text;
-        }
+public class TodoDtoToUpdate
+{
+    [JsonPropertyName("text")]
+    public string Text { get; set; }
+
+    public TodoDtoToUpdate(string text)
+    {
+        Text = text;
     }
 }

@@ -7,6 +7,4 @@ public interface IAuthRepository
     string[] Providers { get; }
 
     Task<IdentityDto?> GetIdentity();
-
-    Task<IdentityDto?> GetIdentityFromHeaders();
 }

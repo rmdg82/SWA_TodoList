@@ -1,5 +1,8 @@
 ﻿# Script to start SWA CLI in order to test authentication/authorization
 
+
+
+
 $FeUrl = "http://localhost:5260"
 $BeUrl = "http://localhost:7071"
 $SwaUrl = "http://localhost:4280"

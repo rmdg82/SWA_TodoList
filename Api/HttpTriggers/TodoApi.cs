@@ -17,15 +17,15 @@ using System.Net;
 using Api.Validators;
 using SharedLibrary.Dtos;
 
-namespace Api;
+namespace Api.HttpTriggers;
 
-public class WebApi
+public class TodoApi
 {
     private readonly ITodoRepository _todoRepository;
-    private readonly ILogger<WebApi> _logger;
+    private readonly ILogger<TodoApi> _logger;
     private readonly IMapper _mapper;
 
-    public WebApi(ITodoRepository todoRepository, ILogger<WebApi> logger, IMapper mapper)
+    public TodoApi(ITodoRepository todoRepository, ILogger<TodoApi> logger, IMapper mapper)
     {
         _todoRepository = todoRepository ?? throw new ArgumentNullException(nameof(todoRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
