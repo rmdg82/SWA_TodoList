@@ -145,7 +145,7 @@ public class WebApiTests
     [Fact]
     public async Task AddTodo_TodoTextTooLong_ReturnBadRequest()
     {
-        TodoDtoToAdd todoDtoToAdd = new(new string('*', ValidationConstants.maxLengthOnAdd + 1));
+        TodoDtoToAdd todoDtoToAdd = new(new string('*', Validation.maxLengthOnAdd + 1));
         HttpRequest request = CreateHttpRequest(HttpMethods.Get, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToAdd));
 
         IActionResult result = await _webApi.AddTodo(request);
@@ -156,7 +156,7 @@ public class WebApiTests
     [Fact]
     public async Task AddTodo_TodoTextNotTooLong_ReturnCreatedAtRoute()
     {
-        TodoDtoToAdd todoDtoToAdd = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToAdd todoDtoToAdd = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Post, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToAdd));
 
         IActionResult result = await _webApi.AddTodo(request);
@@ -168,7 +168,7 @@ public class WebApiTests
     [Fact]
     public async Task AddTodo_RepositoryThrowException_ReturnBadRequest()
     {
-        TodoDtoToAdd todoDtoToAdd = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToAdd todoDtoToAdd = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Post, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToAdd));
         _mockedTodoRepository.Setup(x => x.AddAsync(It.IsAny<Todo>())).Throws<Exception>();
 
@@ -181,7 +181,7 @@ public class WebApiTests
     [Fact]
     public async Task UpdateTodo_TodoTextTooLong_ReturnBadRequest()
     {
-        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', ValidationConstants.maxLengthOnAdd + 1));
+        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', Validation.maxLengthOnAdd + 1));
         HttpRequest request = CreateHttpRequest(HttpMethods.Put, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToUpdate));
 
         IActionResult result = await _webApi.UpdateTodo(request, _existingTodoId);
@@ -192,7 +192,7 @@ public class WebApiTests
     [Fact]
     public async Task UpdateTodo_TodoTextNotTooLong_ReturnNoContent()
     {
-        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Put, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToUpdate));
 
         IActionResult result = await _webApi.UpdateTodo(request, _existingTodoId);
@@ -204,7 +204,7 @@ public class WebApiTests
     [Fact]
     public async Task UpdateTodo_CosmosExceptionNotFound_ReturnNotFoundResult()
     {
-        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Put, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToUpdate));
 
         IActionResult result = await _webApi.UpdateTodo(request, _notExistingTodoId);
@@ -216,7 +216,7 @@ public class WebApiTests
     [Fact]
     public async Task UpdateTodo_CosmosExceptionBadRequest_ReturnBadRequestResult()
     {
-        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Put, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToUpdate));
         _mockedTodoRepository.Setup(x => x.UpdateAsync(_existingTodoId, It.IsAny<string>())).Throws(new CosmosException("", System.Net.HttpStatusCode.BadRequest, 0, "", 0));
 
@@ -229,7 +229,7 @@ public class WebApiTests
     [Fact]
     public async Task UpdateTodo_KeyNotFoundException_ReturnNotFoundObjectResult()
     {
-        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Put, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToUpdate));
         _mockedTodoRepository.Setup(x => x.UpdateAsync(_existingTodoId, It.IsAny<string>())).Throws(new KeyNotFoundException());
 
@@ -242,7 +242,7 @@ public class WebApiTests
     [Fact]
     public async Task UpdateTodo_GenericException_ReturnBadRequestObjectResult()
     {
-        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', ValidationConstants.maxLengthOnAdd));
+        TodoDtoToUpdate todoDtoToUpdate = new(new string('*', Validation.maxLengthOnAdd));
         HttpRequest request = CreateHttpRequest(HttpMethods.Put, queryStrings: null, body: JsonSerializer.Serialize(todoDtoToUpdate));
         _mockedTodoRepository.Setup(x => x.UpdateAsync(_existingTodoId, It.IsAny<string>())).Throws(new Exception());
 

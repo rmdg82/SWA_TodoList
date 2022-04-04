@@ -23,7 +23,7 @@
                 </MudCardHeader>
                 <MudDivider DividerType="DividerType.Middle" />
                 <MudCardContent>
-                    <MudTextField T="string" Counter="ValidationConstants.maxLengthOnAdd" @onkeydown="AddTodoAfterEnter" Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
+                    <MudTextField T="string" Counter="Validation.maxLengthOnAdd" @onkeydown="AddTodoAfterEnter" Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
                 </MudCardContent>
             </MudCard>
         </MudItem>

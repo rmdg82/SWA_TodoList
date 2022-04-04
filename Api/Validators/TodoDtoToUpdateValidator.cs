@@ -10,7 +10,7 @@ namespace Api.Validators
         {
             RuleFor(x => x.Text)
                 .NotNull()
-                .MaximumLength(ValidationConstants.maxLengthOnUpdate);
+                .MaximumLength(Validation.maxLengthOnUpdate);
         }
     }
 }

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedLibrary", "Shared\Sha
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA565287-C3A6-4DD4-ADE4-33E11F196DDC}"
 	ProjectSection(SolutionItems) = preProject
-		SwaStart.ps1 = SwaStart.ps1
+		LaunchLocally.ps1 = LaunchLocally.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{7794C05C-904E-4B2F-86BF-F4AF62485E51}"

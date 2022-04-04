@@ -27,9 +27,9 @@ public partial class UpdateTodoDialog
 
     private static string? CheckMaxLength(string ch)
     {
-        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > ValidationConstants.maxLengthOnUpdate)
+        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > Validation.maxLengthOnUpdate)
         {
-            return $"Max {ValidationConstants.maxLengthOnUpdate} characters";
+            return $"Max {Validation.maxLengthOnUpdate} characters";
         }
 
         return null;

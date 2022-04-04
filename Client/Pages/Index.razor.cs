@@ -133,9 +133,9 @@ public partial class Index
 
     private static string? CheckMaxLength(string ch)
     {
-        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > ValidationConstants.maxLengthOnAdd)
+        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > Validation.maxLengthOnAdd)
         {
-            return $"Max {ValidationConstants.maxLengthOnAdd} characters";
+            return $"Max {Validation.maxLengthOnAdd} characters";
         }
 
         return null;
