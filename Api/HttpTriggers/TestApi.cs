@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -7,11 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Text.Json;
-using SharedLibrary.Dtos;
 using System.Text;
 using Api.Repositories.Interfaces;
 using System.Security.Claims;
 using Api.Models;
+using Api.Utilities;
 
 namespace Api.HttpTriggers;
 
@@ -29,43 +27,24 @@ public class TestApi
     }
 
     [FunctionName("TestApi")]
-    public async Task<IActionResult> PrintHelloWorld([HttpTrigger(AuthorizationLevel.Function, "get", Route = "test")] HttpRequest req)
+    public async Task<IActionResult> TestStuff([HttpTrigger(AuthorizationLevel.Function, "get", Route = "test")] HttpRequest req)
     {
-        var claimsPrincipal = Parse(req);
-        if (claimsPrincipal == null)
+        var clientPrincipal = HttpRequestParser.ParseToClientPrincipal(req);
+        if (clientPrincipal == null)
         {
             return new UnauthorizedResult();
         }
-        var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier).Value;
-        var userDetails = claimsPrincipal.FindFirst(ClaimTypes.Name).Value;
 
-        return new OkObjectResult($"UserId: {userId}, UserDetails: {userDetails} from API");
-    }
+        return new OkObjectResult(clientPrincipal);
 
-    private static ClaimsPrincipal Parse(HttpRequest req)
-    {
-        var principal = new ClientPrincipal();
+        //var claimsPrincipal = HttpRequestParser.ParseToClaimsPrincipal(req);
+        //if (claimsPrincipal == null)
+        //{
+        //    return new UnauthorizedResult();
+        //}
+        //var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier).Value;
+        //var userDetails = claimsPrincipal.FindFirst(ClaimTypes.Name).Value;
 
-        if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
-        {
-            var data = header[0];
-            var decoded = Convert.FromBase64String(data);
-            var json = Encoding.UTF8.GetString(decoded);
-            principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        }
-
-        principal.UserRoles = principal.UserRoles?.Except(new string[] { "anonymous" }, StringComparer.CurrentCultureIgnoreCase);
-
-        if (!principal.UserRoles?.Any() ?? true)
-        {
-            return new ClaimsPrincipal();
-        }
-
-        var identity = new ClaimsIdentity(principal.IdentityProvider);
-        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal.UserId));
-        identity.AddClaim(new Claim(ClaimTypes.Name, principal.UserDetails));
-        identity.AddClaims(principal.UserRoles.Select(r => new Claim(ClaimTypes.Role, r)));
-
-        return new ClaimsPrincipal(identity);
+        //return new OkObjectResult($"UserId: {userId}, UserDetails: {userDetails} from API");
     }
 }
