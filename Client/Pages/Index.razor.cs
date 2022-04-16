@@ -27,6 +27,9 @@ public partial class Index
     [Inject]
     public IAuthRepository? AuthRepository { get; set; }
 
+    [Inject]
+    public ITestRepository? TestRepository { get; set; }
+
     public IEnumerable<TodoDto>? AllTodos { get; set; }
 
     public string NewTodoText { get; set; } = string.Empty;
@@ -38,6 +41,12 @@ public partial class Index
     protected override async Task OnInitializedAsync()
     {
         await LoadAllTodos();
+    }
+
+    public async Task GetTestString()
+    {
+        var test = await TestRepository!.GetHelloWorld();
+        SnackbarService.Add(test, Severity.Normal);
     }
 
     public async Task GetIdentity()

@@ -17,12 +17,12 @@ public class TestRepository : ITestRepository
 
     public async Task<string?> GetHelloWorld()
     {
-        var result = await _httpClient.GetAsync("/api/hello");
+        var result = await _httpClient.GetAsync("/api/test");
         if (result is not null && result.IsSuccessStatusCode)
         {
             return await result.Content.ReadAsStringAsync();
         }
 
-        return "Can't get hello world!";
+        return "Can't reach /api/test";
     }
 }

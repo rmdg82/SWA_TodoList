@@ -29,7 +29,7 @@ public class TestApi
     }
 
     [FunctionName("TestApi")]
-    public async Task<IActionResult> PrintHelloWorld([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hello")] HttpRequest req)
+    public async Task<IActionResult> PrintHelloWorld([HttpTrigger(AuthorizationLevel.Function, "get", Route = "test")] HttpRequest req)
     {
         var claimsPrincipal = Parse(req);
         if (claimsPrincipal == null)
@@ -39,7 +39,7 @@ public class TestApi
         var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier).Value;
         var userDetails = claimsPrincipal.FindFirst(ClaimTypes.Name).Value;
 
-        return new OkObjectResult($"UserId: {userId}, UserDetails: {userDetails}");
+        return new OkObjectResult($"UserId: {userId}, UserDetails: {userDetails} from API");
     }
 
     private static ClaimsPrincipal Parse(HttpRequest req)
