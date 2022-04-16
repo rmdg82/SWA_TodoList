@@ -1,5 +1,4 @@
-﻿using Api.Repositories;
-using Moq;
+﻿using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +18,7 @@ using SharedLibrary;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using Api.HttpTriggers;
+using Api.Repositories.Interfaces;
 
 namespace Api.Tests;
 

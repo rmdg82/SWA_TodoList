@@ -1,6 +1,6 @@
-﻿namespace SharedLibrary.Dtos;
+﻿namespace Api.Models;
 
-public class ClientPrincipalDto
+public class ClientPrincipal
 {
     public string IdentityProvider { get; set; }
     public string UserId { get; set; }
