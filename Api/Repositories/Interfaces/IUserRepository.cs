@@ -4,7 +4,7 @@ namespace Api.Repositories.Interfaces;
 
 public interface IUserRepository
 {
-    Task<User> GetUser(string id);
+    Task<User?> GetUser(string id);
 
-    Task CreateUser(ClientPrincipal clientPrincipal);
+    Task<User> CreateUser(ClientPrincipal clientPrincipal);
 }

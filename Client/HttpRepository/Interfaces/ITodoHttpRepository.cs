@@ -1,6 +1,6 @@
 ﻿using SharedLibrary.Dtos;
 
-namespace Client.HttpRepository;
+namespace Client.HttpRepository.Interfaces;
 
 public interface ITodoHttpRepository
 {

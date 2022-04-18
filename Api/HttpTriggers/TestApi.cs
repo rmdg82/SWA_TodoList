@@ -36,15 +36,5 @@ public class TestApi
         }
 
         return new OkObjectResult(clientPrincipal);
-
-        //var claimsPrincipal = HttpRequestParser.ParseToClaimsPrincipal(req);
-        //if (claimsPrincipal == null)
-        //{
-        //    return new UnauthorizedResult();
-        //}
-        //var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier).Value;
-        //var userDetails = claimsPrincipal.FindFirst(ClaimTypes.Name).Value;
-
-        //return new OkObjectResult($"UserId: {userId}, UserDetails: {userDetails} from API");
     }
 }

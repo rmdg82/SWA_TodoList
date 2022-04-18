@@ -1,5 +1,5 @@
 ﻿using Client.Components;
-using Client.HttpRepository;
+using Client.HttpRepository.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -25,7 +25,7 @@ public partial class Index
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
 
     [Inject]
-    public IAuthRepository? AuthRepository { get; set; }
+    public IAuthHttpRepository? AuthRepository { get; set; }
 
     [Inject]
     public ITestRepository? TestRepository { get; set; }
@@ -45,7 +45,7 @@ public partial class Index
 
     public async Task GetTestString()
     {
-        var test = await TestRepository!.GetHelloWorld();
+        var test = await TestRepository!.GetTest();
         SnackbarService.Add(test, Severity.Normal);
     }
 

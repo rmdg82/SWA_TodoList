@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.HttpRepository;
+namespace Client.HttpRepository.Interfaces;
 
 public interface ITestRepository
 {
-    Task<string?> GetHelloWorld();
+    Task<string?> GetTest();
 }

@@ -2,15 +2,14 @@
 using SharedLibrary;
 using SharedLibrary.Dtos;
 
-namespace Api.Validators
+namespace Api.Validators;
+
+public class TodoDtoToUpdateValidator : AbstractValidator<TodoDtoToUpdate>
 {
-    public class TodoDtoToUpdateValidator : AbstractValidator<TodoDtoToUpdate>
+    public TodoDtoToUpdateValidator()
     {
-        public TodoDtoToUpdateValidator()
-        {
-            RuleFor(x => x.Text)
-                .NotNull()
-                .MaximumLength(Validation.maxLengthOnUpdate);
-        }
+        RuleFor(x => x.Text)
+            .NotNull()
+            .MaximumLength(Validation.maxLengthOnUpdate);
     }
 }

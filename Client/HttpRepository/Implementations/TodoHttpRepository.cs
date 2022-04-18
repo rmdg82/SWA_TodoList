@@ -1,7 +1,8 @@
-﻿using SharedLibrary.Dtos;
+﻿using Client.HttpRepository.Interfaces;
+using SharedLibrary.Dtos;
 using System.Net.Http.Json;
 
-namespace Client.HttpRepository;
+namespace Client.HttpRepository.Implementations;
 
 public class TodoHttpRepository : ITodoHttpRepository
 {

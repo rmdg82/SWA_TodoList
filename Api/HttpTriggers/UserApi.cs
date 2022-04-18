@@ -1,15 +1,13 @@
 ﻿using Api.Models;
 using Api.Repositories.Interfaces;
+using Api.Validators;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Api.HttpTriggers;
 
@@ -27,9 +25,47 @@ public class UserApi
     }
 
     [FunctionName("GetUser")]
-    public async Task<User> GetUser([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/{id}")] HttpRequest req, string id)
+    public async Task<ActionResult<User?>> GetUser([HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id}")] HttpRequest req, string id)
     {
-        User user = await _userRepository.GetUser(id);
-        return _mapper.Map<User>(user);
+        _logger.LogInformation($"New request GetUser: {id}");
+        User? user = await _userRepository.GetUser(id);
+
+        if (user is null)
+        {
+            return new NotFoundResult();
+        }
+
+        return new OkObjectResult(user);
+    }
+
+    [FunctionName("CreateUser")]
+    public async Task<ActionResult<User>> CreateUser([HttpTrigger(AuthorizationLevel.Function, "post", Route = "users")] HttpRequest req)
+    {
+        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        _logger.LogInformation($"New request for {nameof(CreateUser)} with body [{requestBody}].");
+
+        var clientPrincipal = JsonSerializer.Deserialize<ClientPrincipal>(requestBody);
+
+        if (clientPrincipal is null)
+        {
+            _logger.LogError($"Invalid request body for {nameof(CreateUser)}.");
+            return new BadRequestResult();
+        }
+
+        var validator = new ClientPrincipalToAddValidator();
+        var validationResult = validator.Validate(clientPrincipal);
+        if (!validationResult.IsValid)
+        {
+            return new BadRequestObjectResult(
+                validationResult.Errors.Select(x => new
+                {
+                    Field = x.PropertyName,
+                    Error = x.ErrorMessage
+                }));
+        }
+
+        var user = await _userRepository.CreateUser(clientPrincipal);
+
+        return new OkObjectResult(user);
     }
 }

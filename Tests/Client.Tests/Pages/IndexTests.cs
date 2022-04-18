@@ -2,7 +2,7 @@
 using Moq;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
-using Client.HttpRepository;
+using Client.HttpRepository.Interfaces;
 
 namespace Client.Tests.Pages;
 

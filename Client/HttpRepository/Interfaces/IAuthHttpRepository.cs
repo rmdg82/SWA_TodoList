@@ -1,8 +1,8 @@
 ﻿using SharedLibrary.Dtos;
 
-namespace Client.HttpRepository;
+namespace Client.HttpRepository.Interfaces;
 
-public interface IAuthRepository
+public interface IAuthHttpRepository
 {
     string[] Providers { get; }
 

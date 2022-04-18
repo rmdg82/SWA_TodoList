@@ -1,5 +1,6 @@
 using Client;
-using Client.HttpRepository;
+using Client.HttpRepository.Implementations;
+using Client.HttpRepository.Interfaces;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Azure.Functions.Authentication.WebAssembly;
@@ -13,7 +14,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddScoped<ITodoHttpRepository, TodoHttpRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAuthHttpRepository, AuthHttpRepository>();
+builder.Services.AddScoped<IUserHttpRepository, UserHttpRepository>();
 builder.Services.AddScoped<ITestRepository, TestRepository>();
 builder.Services.AddStaticWebAppsAuthentication();
 

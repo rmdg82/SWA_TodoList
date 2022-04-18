@@ -1,4 +1,4 @@
-﻿using Client.HttpRepository;
+﻿using Client.HttpRepository.Interfaces;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SharedLibrary.Dtos;
@@ -9,13 +9,10 @@ namespace Client.Shared;
 public partial class MainLayout
 {
     [Inject]
-    public IAuthRepository? AuthRepository { get; set; }
+    public IAuthHttpRepository? AuthHttpRepository { get; set; }
 
     [Inject]
-    public ITestRepository? TestRepository { get; set; }
-
-    [Inject]
-    public IDialogService? DialogService { get; set; }
+    public IUserHttpRepository? UserHttpRepository { get; set; }
 
     public IdentityDto? IdentityDto { get; set; }
     private bool _isAuthenticated;
@@ -23,10 +20,11 @@ public partial class MainLayout
 
     protected override async Task OnInitializedAsync()
     {
-        IdentityDto = await AuthRepository!.GetIdentity();
+        IdentityDto = await AuthHttpRepository!.GetIdentity();
         if (IdentityDto?.ClientPrincipal != null && IdentityDto.ClientPrincipal.UserRoles.Contains("authenticated"))
         {
             _isAuthenticated = true;
+
             switch (IdentityDto.ClientPrincipal.IdentityProvider)
             {
                 case "github":
@@ -44,12 +42,12 @@ public partial class MainLayout
                 default:
                     break;
             }
-        }
-    }
 
-    public async Task GetIdentityFromHeaders()
-    {
-        var result = await TestRepository!.GetHelloWorld();
-        await DialogService!.ShowMessageBox("Identity From Headers", JsonSerializer.Serialize(result));
+            var user = await UserHttpRepository!.GetUser(IdentityDto!.ClientPrincipal.UserId);
+            if (user is null)
+            {
+                await UserHttpRepository!.CreateUser(IdentityDto.ClientPrincipal);
+            }
+        }
     }
 }

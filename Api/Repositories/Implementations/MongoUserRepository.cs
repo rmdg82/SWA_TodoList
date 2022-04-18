@@ -24,7 +24,7 @@ public class MongoUserRepository : IUserRepository
         _userCollection = database.GetCollection<User>(collectionId);
     }
 
-    public async Task CreateUser(ClientPrincipal clientPrincipal)
+    public async Task<User> CreateUser(ClientPrincipal clientPrincipal)
     {
         if (clientPrincipal is null)
         {
@@ -33,13 +33,16 @@ public class MongoUserRepository : IUserRepository
 
         var user = new User
         {
+            Id = clientPrincipal.UserId,
             ClientPrincipal = clientPrincipal
         };
 
         await _userCollection.InsertOneAsync(user);
+
+        return user;
     }
 
-    public async Task<User> GetUser(string id)
+    public async Task<User?> GetUser(string id)
     {
         return await _userCollection.Find(user => user.Id == id).FirstOrDefaultAsync();
     }

@@ -10,17 +10,17 @@ public static class HttpRequestParser
 {
     internal static ClientPrincipal? ParseToClientPrincipal(HttpRequest req)
     {
-        var principal = new ClientPrincipal();
-
         if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
         {
             var data = header[0];
             var decoded = Convert.FromBase64String(data);
             var json = Encoding.UTF8.GetString(decoded);
-            principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return principal;
         }
 
-        return principal;
+        return null;
     }
 
     internal static ClaimsPrincipal ParseToClaimsPrincipal(HttpRequest req)
