@@ -132,12 +132,14 @@
             </MudCard>
         </MudItem>
 
-        <MudItem xs="12">
-            <MudButton FullWidth="true" OnClick="GetTestString" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">TestAPI</MudButton>
-        </MudItem>
+        
         
         @if(HostEnvironment!.Environment == "Development")
         {
+            <MudItem xs="12">
+                <MudButton FullWidth="true" OnClick="GetTestString" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">TestAPI</MudButton>
+            </MudItem>
+            
             <MudItem xs="12"> 
                 <MudButton FullWidth="true" OnClick="ResetDb" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Reset Db</MudButton>
             </MudItem>
