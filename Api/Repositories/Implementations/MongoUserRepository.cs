@@ -34,7 +34,8 @@ public class MongoUserRepository : IUserRepository
         var user = new User
         {
             Id = clientPrincipal.UserId,
-            ClientPrincipal = clientPrincipal
+            ClientPrincipal = clientPrincipal,
+            Todos = new List<Todo>()
         };
 
         await _userCollection.InsertOneAsync(user);
