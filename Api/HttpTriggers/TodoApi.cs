@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -8,17 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using Api.Models;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using System.Net;
 using Api.Validators;
 using SharedLibrary.Dtos;
 using Api.Repositories.Interfaces;
-using System.Text;
-using System.Security.Claims;
 using Api.Utilities;
+using Api.Exceptions;
 
 namespace Api.HttpTriggers;
 
@@ -51,40 +45,29 @@ public class TodoApi
     }
 
     [FunctionName("GetAllTodos")]
-    public async Task<ActionResult<IEnumerable<TodoDto>>> GetTodos([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos")] HttpRequest req)
+    public async Task<IActionResult> GetTodos([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos")] HttpRequest req)
     {
         var queryParams = req.QueryString;
         var getOnlyUncompleted = req.Query["onlyUncompleted"];
         _logger.LogInformation($"New request for {nameof(GetTodos)} with querystring [{queryParams}].");
 
         var clientPrincipal = HttpRequestParser.ParseToClientPrincipal(req);
-        if (clientPrincipal?.UserId is null)
+        if (clientPrincipal is null)
         {
-            //return new UnauthorizedResult();
-            clientPrincipal = new ClientPrincipal
-            {
-                UserId = "16578f990d2329166d4e136248dc141f"
-            };
+            return new UnauthorizedResult();
         }
 
         var todos = new List<Todo>();
-        try
-        {
-            bool onlyUncompleted = Convert.ToBoolean(getOnlyUncompleted);
 
-            if (onlyUncompleted)
-            {
-                todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId, getOnlyUncompleted: true)).ToList();
-            }
-            else
-            {
-                todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId)).ToList();
-            }
+        bool onlyUncompleted = Convert.ToBoolean(getOnlyUncompleted);
+
+        if (onlyUncompleted)
+        {
+            todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId, getOnlyUncompleted: true)).ToList();
         }
-        catch (FormatException ex)
+        else
         {
             todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId)).ToList();
-            _logger.LogInformation(ex.Message);
         }
 
         var todosDto = _mapper.Map<IEnumerable<TodoDto>>(todos);
@@ -92,7 +75,7 @@ public class TodoApi
     }
 
     [FunctionName("GetTodoById")]
-    public async Task<ActionResult<TodoDto>> GetTodoById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
+    public async Task<IActionResult> GetTodoById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
     {
         _logger.LogInformation($"New request for {nameof(GetTodoById)} with id [{todoId}].");
 
@@ -125,11 +108,20 @@ public class TodoApi
             return new UnauthorizedResult();
         }
 
-        var todoToAddDto = JsonSerializer.Deserialize<TodoDtoToAdd>(requestBody);
+        TodoDtoToAdd? todoToAddDto;
+        try
+        {
+            todoToAddDto = JsonSerializer.Deserialize<TodoDtoToAdd>(requestBody);
+        }
+        catch (Exception)
+        {
+            _logger.LogError($"I could not parse the request body {requestBody}.");
+            return new BadRequestResult();
+        }
 
         if (todoToAddDto is null)
         {
-            _logger.LogError($"Invalid request body for {nameof(AddTodo)}.");
+            _logger.LogError($"Parses request body is null.");
             return new BadRequestResult();
         }
 
@@ -151,6 +143,11 @@ public class TodoApi
         try
         {
             await _todoRepository.AddAsync(clientPrincipal.UserId, todoToAdd);
+        }
+        catch (UserNotFoundException)
+        {
+            _logger.LogError($"User {clientPrincipal.UserId} not found.");
+            return new NotFoundResult();
         }
         catch (Exception ex)
         {
@@ -174,11 +171,20 @@ public class TodoApi
             return new UnauthorizedResult();
         }
 
-        var todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
+        TodoDtoToUpdate? todoToUpdateDto;
+        try
+        {
+            todoToUpdateDto = JsonSerializer.Deserialize<TodoDtoToUpdate>(requestBody);
+        }
+        catch (Exception)
+        {
+            _logger.LogError($"I could not parse the request body {requestBody}.");
+            return new BadRequestResult();
+        }
 
         if (todoToUpdateDto is null)
         {
-            _logger.LogError($"Invalid request body for {nameof(UpdateTodo)}.");
+            _logger.LogError($"Parses request body is null.");
             return new BadRequestResult();
         }
 
@@ -198,25 +204,20 @@ public class TodoApi
         {
             await _todoRepository.UpdateAsync(clientPrincipal.UserId, todoId, todoToUpdateDto.Text);
         }
-        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.NotFound))
+        catch (UserNotFoundException)
         {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
+            _logger.LogError($"User {clientPrincipal.UserId} not found.");
             return new NotFoundResult();
         }
-        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.BadRequest))
+        catch (TodoNotFoundException)
         {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestResult();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundObjectResult(ex.Message);
+            _logger.LogError($"Todo with id {todoId} not found.");
+            return new NotFoundResult();
         }
         catch (Exception ex)
         {
             _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestObjectResult(ex.Message);
+            return new BadRequestResult();
         }
 
         return new NoContentResult();
@@ -236,15 +237,20 @@ public class TodoApi
             _logger.LogInformation($"Request complete todo with id [{todoId}]");
             await _todoRepository.CompleteAsync(clientPrincipal.UserId, todoId);
         }
-        catch (KeyNotFoundException ex)
+        catch (UserNotFoundException)
         {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
+            _logger.LogError($"User {clientPrincipal.UserId} not found.");
+            return new NotFoundResult();
+        }
+        catch (TodoNotFoundException)
+        {
+            _logger.LogError($"Todo with id {todoId} not found.");
             return new NotFoundResult();
         }
         catch (Exception ex)
         {
             _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new BadRequestObjectResult(ex.Message);
+            return new BadRequestResult();
         }
 
         return new OkResult();
@@ -265,7 +271,12 @@ public class TodoApi
         {
             await _todoRepository.DeleteAsync(clientPrincipal.UserId, todoId);
         }
-        catch (CosmosException ex) when (ex.StatusCode.Equals(HttpStatusCode.NotFound))
+        catch (UserNotFoundException ex)
+        {
+            _logger.LogError($"Catched exception: [{ex.Message}]");
+            return new NotFoundResult();
+        }
+        catch (TodoNotFoundException ex)
         {
             _logger.LogError($"Catched exception: [{ex.Message}]");
             return new NotFoundResult();

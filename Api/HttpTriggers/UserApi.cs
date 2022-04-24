@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using SharedLibrary.Dtos;
 using System.Text.Json;
 
 namespace Api.HttpTriggers;
@@ -25,7 +26,7 @@ public class UserApi
     }
 
     [FunctionName("GetUser")]
-    public async Task<ActionResult<User?>> GetUser([HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id}")] HttpRequest req, string id)
+    public async Task<ActionResult<UserDto>> GetUser([HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id}")] HttpRequest req, string id)
     {
         _logger.LogInformation($"New request GetUser: {id}");
         User? user = await _userRepository.GetUser(id);
@@ -35,7 +36,7 @@ public class UserApi
             return new NotFoundResult();
         }
 
-        return new OkObjectResult(user);
+        return new OkObjectResult(_mapper.Map<UserDto>(user));
     }
 
     [FunctionName("CreateUser")]
@@ -66,6 +67,6 @@ public class UserApi
 
         var user = await _userRepository.CreateUser(clientPrincipal);
 
-        return new OkObjectResult(user);
+        return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
     }
 }

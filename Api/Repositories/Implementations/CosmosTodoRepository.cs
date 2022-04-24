@@ -82,7 +82,7 @@ public class CosmosTodoRepository : ITodoRepository
         }
 
         todo.IsCompleted = true;
-        todo.CompletedAt = DateTime.Now;
+        todo.CompletedAt = DateTime.UtcNow;
 
         await _container.UpsertItemAsync(todo, new PartitionKey(todoId));
     }

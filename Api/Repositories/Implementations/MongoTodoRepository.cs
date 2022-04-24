@@ -1,4 +1,5 @@
-﻿using Api.Models;
+﻿using Api.Exceptions;
+using Api.Models;
 using Api.Repositories.Interfaces;
 using MongoDB.Driver;
 
@@ -75,7 +76,7 @@ public class MongoTodoRepository : ITodoRepository
         var user = await _userCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
         if (user is null)
         {
-            return;
+            throw new UserNotFoundException($"User {userId} not found.");
         }
 
         user.Todos.Add(todo);
@@ -95,20 +96,24 @@ public class MongoTodoRepository : ITodoRepository
         }
 
         User user = await _userCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
-        Todo? todo = user?.Todos.FirstOrDefault(u => u.Id == todoId);
+        if (user is null)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
 
+        var todo = user.Todos.FirstOrDefault(t => t.Id == todoId);
         if (todo is null)
         {
-            return;
+            throw new TodoNotFoundException($"Todo {todoId} not found.");
         }
 
         todo.IsCompleted = true;
-        todo.CompletedAt = DateTime.Now;
+        todo.CompletedAt = DateTime.UtcNow;
 
         await _userCollection!.ReplaceOneAsync(u => u.Id == userId, user);
     }
 
-    public Task DeleteAsync(string userId, string todoId)
+    public async Task DeleteAsync(string userId, string todoId)
     {
         if (string.IsNullOrEmpty(userId))
         {
@@ -120,7 +125,21 @@ public class MongoTodoRepository : ITodoRepository
             throw new ArgumentException($"'{nameof(todoId)}' cannot be null or empty.", nameof(todoId));
         }
 
-        return _userCollection.DeleteOneAsync(x => x.Id == userId && x.Todos.Any(t => t.Id == todoId));
+        var user = _userCollection.Find(u => u.Id == userId).FirstOrDefault();
+        if (user is null)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
+
+        var todo = user.Todos.FirstOrDefault(t => t.Id == todoId);
+        if (todo is null)
+        {
+            throw new TodoNotFoundException($"Todo {todoId} not found.");
+        }
+
+        user.Todos.Remove(todo);
+
+        await _userCollection.ReplaceOneAsync(u => u.Id == userId, user);
     }
 
     public async Task<Todo?> GetByIdAsync(string userId, string todoId)
@@ -130,7 +149,7 @@ public class MongoTodoRepository : ITodoRepository
             throw new ArgumentException($"'{nameof(userId)}' cannot be null or empty.", nameof(userId));
         }
 
-        if (todoId is null)
+        if (string.IsNullOrEmpty(todoId))
         {
             throw new ArgumentNullException(nameof(todoId));
         }
@@ -138,16 +157,10 @@ public class MongoTodoRepository : ITodoRepository
         var user = await _userCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
         if (user is null)
         {
-            return null;
+            throw new UserNotFoundException($"User {userId} not found.");
         }
 
         return user?.Todos.FirstOrDefault(t => t.Id == todoId);
-    }
-
-    [Obsolete]
-    public Task<IEnumerable<Todo>> GetByQueryAsync(string userId, string sqlQuery)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<Todo>> GetByQueryAsync(string userId, bool getOnlyUncompleted = false)
@@ -158,10 +171,9 @@ public class MongoTodoRepository : ITodoRepository
         }
 
         var user = await _userCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
-
         if (user is null)
         {
-            return new List<Todo>();
+            throw new UserNotFoundException($"User {userId} not found.");
         }
 
         return getOnlyUncompleted ? user.Todos.Where(t => t.IsCompleted == true) : user.Todos;
@@ -170,10 +182,9 @@ public class MongoTodoRepository : ITodoRepository
     public async Task<bool> InitializeDbDataIfEmpty(string userId)
     {
         var user = await _userCollection.Find(x => x.Id == userId).FirstOrDefaultAsync();
-
         if (user is null)
         {
-            return false;
+            throw new UserNotFoundException($"User {userId} not found.");
         }
 
         if (!user.Todos.Any())
@@ -195,10 +206,9 @@ public class MongoTodoRepository : ITodoRepository
         }
 
         var user = await _userCollection.Find(x => x.Id == userId).FirstOrDefaultAsync();
-
         if (user is null)
         {
-            return;
+            throw new UserNotFoundException($"User {userId} not found.");
         }
 
         user.Todos = _fakeTodos;
@@ -225,17 +235,17 @@ public class MongoTodoRepository : ITodoRepository
         var user = await _userCollection.Find(x => x.Id == userId).FirstOrDefaultAsync();
         if (user is null)
         {
-            return;
+            throw new UserNotFoundException($"User {userId} not found.");
         }
 
-        var todo = user.Todos.FirstOrDefault(x => x.Id == todoId);
-
+        var todo = user.Todos.FirstOrDefault(t => t.Id == todoId);
         if (todo is null)
         {
-            return;
+            throw new TodoNotFoundException($"Todo {todoId} not found.");
         }
 
         todo.Text = todoTextToUpdate;
+
         await _userCollection.ReplaceOneAsync(x => x.Id == userId, user);
     }
 }
