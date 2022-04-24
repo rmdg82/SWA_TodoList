@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace SharedLibrary.Dtos
+namespace SharedLibrary.Dtos;
+
+public class TodoDtoToAdd
 {
-    public class TodoDtoToAdd
-    {
-        [JsonPropertyName("text")]
-        public string Text { get; set; }
+    [JsonPropertyName("text")]
+    public string Text { get; set; }
 
-        public TodoDtoToAdd(string text)
-        {
-            Text = text;
-        }
+    public TodoDtoToAdd(string text)
+    {
+        Text = text;
     }
 }

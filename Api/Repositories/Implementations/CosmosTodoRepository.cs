@@ -1,12 +1,12 @@
 ﻿using Api.Models;
+using Api.Repositories.Interfaces;
 using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Api.Repositories;
+namespace Api.Repositories.Implementations;
 
 public class CosmosTodoRepository : ITodoRepository
 {
@@ -58,6 +58,11 @@ public class CosmosTodoRepository : ITodoRepository
         await _container.CreateItemAsync(todo, new PartitionKey(todo.Id));
     }
 
+    public Task AddAsync(string userId, Todo todo)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task CompleteAsync(string todoId)
     {
         if (string.IsNullOrWhiteSpace(todoId))
@@ -77,14 +82,24 @@ public class CosmosTodoRepository : ITodoRepository
         }
 
         todo.IsCompleted = true;
-        todo.CompletedAt = DateTime.Now;
+        todo.CompletedAt = DateTime.UtcNow;
 
         await _container.UpsertItemAsync(todo, new PartitionKey(todoId));
+    }
+
+    public Task CompleteAsync(string userId, string todoId)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task DeleteAsync(string todoId)
     {
         await _container.DeleteItemAsync<Todo>(todoId, new PartitionKey(todoId));
+    }
+
+    public Task DeleteAsync(string userId, string todoId)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Todo> GetByIdAsync(string todoId)
@@ -98,6 +113,11 @@ public class CosmosTodoRepository : ITodoRepository
         {
             return null;
         }
+    }
+
+    public Task<Todo> GetByIdAsync(string userId, string todoId)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery)
@@ -126,6 +146,16 @@ public class CosmosTodoRepository : ITodoRepository
         }
     }
 
+    public Task<IEnumerable<Todo>> GetByQueryAsync(string userId, string sqlQuery)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<Todo>> GetByQueryAsync(string userId, bool getOnlyUncompleted = false)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<bool> InitializeDbDataIfEmpty()
     {
         var todos = await GetByQueryAsync("SELECT * FROM c");
@@ -142,6 +172,11 @@ public class CosmosTodoRepository : ITodoRepository
         return false;
     }
 
+    public Task<bool> InitializeDbDataIfEmpty(string userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task ResetDb()
     {
         var allTodos = await GetByQueryAsync("SELECT * FROM c");
@@ -155,6 +190,11 @@ public class CosmosTodoRepository : ITodoRepository
         {
             await AddAsync(todo);
         }
+    }
+
+    public Task ResetDb(string userId)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task UpdateAsync(string todoId, string todoTextToUpdate)
@@ -174,5 +214,10 @@ public class CosmosTodoRepository : ITodoRepository
         todo.Text = todoTextToUpdate;
 
         await _container.UpsertItemAsync(todo, new PartitionKey(todoId));
+    }
+
+    public Task UpdateAsync(string userId, string todoId, string todoTextToUpdate)
+    {
+        throw new NotImplementedException();
     }
 }

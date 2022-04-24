@@ -3,36 +3,35 @@ using MudBlazor;
 using SharedLibrary;
 using SharedLibrary.Dtos;
 
-namespace Client.Components
+namespace Client.Components;
+
+public partial class UpdateTodoDialog
 {
-    public partial class UpdateTodoDialog
+    private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
+
+    [CascadingParameter]
+    public MudDialogInstance? MudDialogInstance { get; set; }
+
+    [Parameter]
+    public TodoDto TodoDto { get; set; } = new TodoDto();
+
+    public void Submit()
     {
-        private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
+        MudDialogInstance!.Close(DialogResult.Ok(TodoDto));
+    }
 
-        [CascadingParameter]
-        public MudDialogInstance? MudDialogInstance { get; set; }
+    public void Cancel()
+    {
+        MudDialogInstance!.Cancel();
+    }
 
-        [Parameter]
-        public TodoDto TodoDto { get; set; } = new TodoDto();
-
-        public void Submit()
+    private static string? CheckMaxLength(string ch)
+    {
+        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > Validation.maxLengthOnUpdate)
         {
-            MudDialogInstance!.Close(DialogResult.Ok(TodoDto));
+            return $"Max {Validation.maxLengthOnUpdate} characters";
         }
 
-        public void Cancel()
-        {
-            MudDialogInstance!.Cancel();
-        }
-
-        private static string? CheckMaxLength(string ch)
-        {
-            if (!string.IsNullOrWhiteSpace(ch) && ch.Length > ValidationConstants.maxLengthOnUpdate)
-            {
-                return $"Max {ValidationConstants.maxLengthOnUpdate} characters";
-            }
-
-            return null;
-        }
+        return null;
     }
 }

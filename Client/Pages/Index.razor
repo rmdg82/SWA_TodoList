@@ -1,13 +1,11 @@
-﻿@page "/"
-@page "/index"
+﻿@page "/index"
+@page "/"
 @using SharedLibrary
 
+@attribute [Authorize]
 <PageTitle>Blazor - Todo List</PageTitle>
-
 <MudContainer Class="mt-10 mb-10">
-    
     <MudGrid>
-
         <!-- Add todo card -->
         <MudItem xs="12" >
             <MudCard Elevation="3" id="add-todo-card" >
@@ -25,7 +23,7 @@
                 </MudCardHeader>
                 <MudDivider DividerType="DividerType.Middle" />
                 <MudCardContent>
-                    <MudTextField T="string" Counter="ValidationConstants.maxLengthOnAdd" @onkeydown="AddTodoAfterEnter" Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
+                    <MudTextField T="string" Counter="Validation.maxLengthOnAdd" @onkeydown="AddTodoAfterEnter" Immediate="true" Validation="ValidationFunc" AutoFocus @bind-Value="NewTodoText" Variant="Variant.Outlined" Label="Insert a new todo" Adornment="Adornment.End" AdornmentIcon="@Icons.Sharp.AddCircle" OnAdornmentClick="AddTodo"></MudTextField>
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -133,9 +131,15 @@
                 </MudCardContent>
             </MudCard>
         </MudItem>
+
+        
         
         @if(HostEnvironment!.Environment == "Development")
         {
+            <MudItem xs="12">
+                <MudButton FullWidth="true" OnClick="GetTestString" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">TestAPI</MudButton>
+            </MudItem>
+            
             <MudItem xs="12"> 
                 <MudButton FullWidth="true" OnClick="ResetDb" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Reset Db</MudButton>
             </MudItem>

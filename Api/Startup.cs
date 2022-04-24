@@ -1,7 +1,9 @@
-﻿using Api.Repositories;
+﻿using Api.Repositories.Implementations;
+using Api.Repositories.Interfaces;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using System;
@@ -27,7 +29,8 @@ public class Startup : FunctionsStartup
         });
 
         //builder.Services.AddSingleton<ITodoRepository>(InitializeCosmosClientInstanceAsync().GetAwaiter().GetResult());
-        builder.Services.AddSingleton<ITodoRepository>(InitializeMongoDbRepositoryAsync());
+        builder.Services.AddSingleton<ITodoRepository>(InitializeMongoTodoRepositoryAsync());
+        builder.Services.AddSingleton<IUserRepository>(InitializeMongoUserRepositoryAsync());
     }
 
     private static async Task<CosmosTodoRepository> InitializeCosmosClientInstanceAsync()
@@ -52,18 +55,50 @@ public class Startup : FunctionsStartup
         return cosmosDbService;
     }
 
-    private static MongoDbRepository InitializeMongoDbRepositoryAsync()
+    private static MongoTodoRepository InitializeMongoTodoRepositoryAsync()
     {
-        string connectionString = Environment.GetEnvironmentVariable("MongoDbConnectionString");
-        string databaseId = Environment.GetEnvironmentVariable("DatabaseId");
-        string collectionId = Environment.GetEnvironmentVariable("ContainerId");
+        string? connectionString = Environment.GetEnvironmentVariable("MongoDbConnectionString");
+        string? databaseId = Environment.GetEnvironmentVariable("DatabaseId");
+        string? collectionId = Environment.GetEnvironmentVariable("ContainerId");
+
+        if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(collectionId))
+        {
+            throw new Exception("MongoDbConnectionString, DatabaseId and ContainerId must be set");
+        }
 
         var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
         ConventionRegistry.Register("camelCase", conventionPack, t => true);
 
         var mongoClient = new MongoClient(connectionString);
 
-        var mongoDbRepository = new MongoDbRepository(mongoClient, databaseId, collectionId);
+        var mongoDbRepository = new MongoTodoRepository(mongoClient, databaseId, collectionId);
+
+        return mongoDbRepository;
+    }
+
+    private static MongoUserRepository InitializeMongoUserRepositoryAsync()
+    {
+        string? connectionString = Environment.GetEnvironmentVariable("MongoDbConnectionString");
+        string? databaseId = Environment.GetEnvironmentVariable("DatabaseId");
+        string? collectionId = Environment.GetEnvironmentVariable("ContainerId");
+
+        if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(collectionId))
+        {
+            throw new Exception("MongoDbConnectionString, DatabaseId and ContainerId must be set");
+        }
+
+        var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+        ConventionRegistry.Register("camelCase", conventionPack, t => true);
+
+        BsonClassMap.RegisterClassMap<User>(cm =>
+        {
+            cm.AutoMap();
+            cm.SetIdMember(cm.GetMemberMap(c => c.Id));
+        });
+
+        var mongoClient = new MongoClient(connectionString);
+
+        var mongoDbRepository = new MongoUserRepository(mongoClient, databaseId, collectionId);
 
         return mongoDbRepository;
     }

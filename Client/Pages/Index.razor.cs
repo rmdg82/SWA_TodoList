@@ -1,11 +1,12 @@
 ﻿using Client.Components;
-using Client.HttpRepository;
+using Client.HttpRepository.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using SharedLibrary;
 using SharedLibrary.Dtos;
+using System.Text.Json;
 
 namespace Client.Pages;
 
@@ -18,20 +19,45 @@ public partial class Index
     public IDialogService? DialogService { get; set; }
 
     [Inject]
-    public ISnackbar SnackbarService { get; set; }
+    public ISnackbar? SnackbarService { get; set; }
 
     [Inject]
     public ITodoHttpRepository? TodoHttpRepository { get; set; }
 
+    [Inject]
+    public IAuthHttpRepository? AuthRepository { get; set; }
+
+    [Inject]
+    public ITestRepository? TestRepository { get; set; }
+
     public IEnumerable<TodoDto>? AllTodos { get; set; }
 
     public string NewTodoText { get; set; } = string.Empty;
+
+    public string identity = string.Empty;
 
     private Func<string, string?> ValidationFunc { get; set; } = CheckMaxLength;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAllTodos();
+    }
+
+    public async Task GetTestString()
+    {
+        var test = await TestRepository!.GetTest();
+        SnackbarService.Add(test, Severity.Normal);
+    }
+
+    public async Task GetIdentity()
+    {
+        var response = await AuthRepository!.GetIdentity();
+        if (response == null)
+        {
+            identity = "Response null";
+        }
+
+        identity = JsonSerializer.Serialize(response);
     }
 
     public async Task AddTodo()
@@ -97,7 +123,7 @@ public partial class Index
     public async Task DeleteTodo(string todoId)
     {
         await TodoHttpRepository!.DeleteTodo(todoId);
-        SnackbarService.Add("Todo deleted!", Severity.Success);
+        SnackbarService!.Add("Todo deleted!", Severity.Success);
         await LoadAllTodos();
     }
 
@@ -105,7 +131,6 @@ public partial class Index
     {
         await TodoHttpRepository!.ResetDb();
         AllTodos = await TodoHttpRepository.GetTodos();
-
         StateHasChanged();
     }
 
@@ -117,9 +142,9 @@ public partial class Index
 
     private static string? CheckMaxLength(string ch)
     {
-        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > ValidationConstants.maxLengthOnAdd)
+        if (!string.IsNullOrWhiteSpace(ch) && ch.Length > Validation.maxLengthOnAdd)
         {
-            return $"Max {ValidationConstants.maxLengthOnAdd} characters";
+            return $"Max {Validation.maxLengthOnAdd} characters";
         }
 
         return null;

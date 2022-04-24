@@ -10,4 +10,8 @@
     <Folder Include="Validation\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Functions.Authentication.WebAssembly" Version="1.0.1-preview" />
+  </ItemGroup>
+
 </Project>

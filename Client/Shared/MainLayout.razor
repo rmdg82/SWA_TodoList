@@ -6,9 +6,21 @@
 
 <MudLayout>
     <MudAppBar Elevation="3">
-        <MudSpacer />
         <MudText Typo="Typo.h5" Color="Color.Inherit">Blazor - Todo List</MudText>
         <MudSpacer />
+        @if (_isAuthenticated)
+        {
+            <MudIconButton Icon="@_icon" Color="Color.Inherit"></MudIconButton>
+            <MudText Typo="Typo.h5" Color="Color.Inherit">@(IdentityDto?.ClientPrincipal?.UserDetails)</MudText>
+            <MudTooltip Text="Logout">
+                <MudIconButton Link="/.auth/logout" Icon="@Icons.Material.TwoTone.Logout" Color="Color.Inherit"></MudIconButton>
+            </MudTooltip>
+        }
+        else
+        {
+            <MudIconButton Icon="@_icon" Color="Color.Inherit"></MudIconButton>
+            <MudText Typo="Typo.h5" Color="Color.Inherit">Login</MudText>
+        }
     </MudAppBar>
     <MudMainContent>
         @Body
