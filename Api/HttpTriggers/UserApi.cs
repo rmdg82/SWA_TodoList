@@ -40,7 +40,7 @@ public class UserApi
     }
 
     [FunctionName("CreateUser")]
-    public async Task<ActionResult<User>> CreateUser([HttpTrigger(AuthorizationLevel.Function, "post", Route = "users")] HttpRequest req)
+    public async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Function, "post", Route = "users")] HttpRequest req)
     {
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation($"New request for {nameof(CreateUser)} with body [{requestBody}].");
