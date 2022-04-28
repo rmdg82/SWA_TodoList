@@ -22,6 +22,7 @@ public class Startup : FunctionsStartup
         builder.Services.Configure<JsonSerializerOptions>(options =>
         {
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.PropertyNameCaseInsensitive = true;
             options.WriteIndented = true;
             options.Converters.Add(new JsonStringEnumConverter());
         });

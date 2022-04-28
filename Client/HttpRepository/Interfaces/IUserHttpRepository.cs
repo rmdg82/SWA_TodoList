@@ -11,5 +11,5 @@ public interface IUserHttpRepository
 {
     Task<UserDto?> GetUser(string userId);
 
-    Task CreateUser(ClientPrincipalDto clientPrincipalDto);
+    Task<UserDto?> CreateUser(ClientPrincipalDto clientPrincipalDto);
 }

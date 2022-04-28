@@ -246,6 +246,6 @@ public class MongoTodoRepository : ITodoRepository
 
         todo.Text = todoTextToUpdate;
 
-        await _userCollection.ReplaceOneAsync(x => x.Id == userId, user);
+        await _userCollection.ReplaceOneAsync(x => x.Id == userId, user, options: new ReplaceOptions { IsUpsert = true });
     }
 }

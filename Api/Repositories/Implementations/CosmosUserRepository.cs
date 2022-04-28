@@ -5,6 +5,11 @@ namespace Api.Repositories.Implementations;
 
 public class CosmosUserRepository : IUserRepository
 {
+    public Task<User?> CreateIfNotExists(ClientPrincipal clientPrincipal)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<User> CreateUser(ClientPrincipal clientPrincipal)
     {
         throw new NotImplementedException();

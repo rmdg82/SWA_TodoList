@@ -18,17 +18,18 @@ public class UserApi
     private readonly ILogger<UserApi> _logger;
     private readonly IUserRepository _userRepository;
 
-    public UserApi(IMapper mapper, ILogger<UserApi> logger, IUserRepository userRepository)
+    public UserApi(IUserRepository userRepository, ILogger<UserApi> logger, IMapper mapper)
     {
         _mapper = mapper;
         _logger = logger;
         _userRepository = userRepository;
     }
 
-    [FunctionName("GetUser")]
-    public async Task<ActionResult<UserDto>> GetUser([HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id}")] HttpRequest req, string id)
+    [FunctionName(nameof(GetUser))]
+    public async Task<IActionResult> GetUser([HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id}")] HttpRequest req, string id)
     {
         _logger.LogInformation($"New request GetUser: {id}");
+
         User? user = await _userRepository.GetUser(id);
 
         if (user is null)
@@ -39,17 +40,26 @@ public class UserApi
         return new OkObjectResult(_mapper.Map<UserDto>(user));
     }
 
-    [FunctionName("CreateUser")]
+    [FunctionName(nameof(CreateUser))]
     public async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Function, "post", Route = "users")] HttpRequest req)
     {
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         _logger.LogInformation($"New request for {nameof(CreateUser)} with body [{requestBody}].");
 
-        var clientPrincipal = JsonSerializer.Deserialize<ClientPrincipal>(requestBody);
+        ClientPrincipalDto? clientPrincipal;
+        try
+        {
+            clientPrincipal = JsonSerializer.Deserialize<ClientPrincipalDto>(requestBody);
+        }
+        catch (Exception)
+        {
+            _logger.LogError($"I could not parse the request body {requestBody}.");
+            return new BadRequestResult();
+        }
 
         if (clientPrincipal is null)
         {
-            _logger.LogError($"Invalid request body for {nameof(CreateUser)}.");
+            _logger.LogError($"Parses request body is null.");
             return new BadRequestResult();
         }
 
@@ -65,8 +75,10 @@ public class UserApi
                 }));
         }
 
-        var user = await _userRepository.CreateUser(clientPrincipal);
+        var user = await _userRepository.CreateUser(_mapper.Map<ClientPrincipal>(clientPrincipal));
 
-        return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
+        return (user is null) ?
+            new OkObjectResult(new { Message = "User already exists." }) :
+            new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
     }
 }

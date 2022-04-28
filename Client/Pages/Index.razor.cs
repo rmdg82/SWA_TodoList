@@ -46,18 +46,7 @@ public partial class Index
     public async Task GetTestString()
     {
         var test = await TestRepository!.GetTest();
-        SnackbarService.Add(test, Severity.Normal);
-    }
-
-    public async Task GetIdentity()
-    {
-        var response = await AuthRepository!.GetIdentity();
-        if (response == null)
-        {
-            identity = "Response null";
-        }
-
-        identity = JsonSerializer.Serialize(response);
+        SnackbarService!.Add(test, Severity.Normal);
     }
 
     public async Task AddTodo()
@@ -123,7 +112,7 @@ public partial class Index
     public async Task DeleteTodo(string todoId)
     {
         await TodoHttpRepository!.DeleteTodo(todoId);
-        SnackbarService!.Add("Todo deleted!", Severity.Success);
+        SnackbarService!.Add("Todo deleted!", Severity.Error);
         await LoadAllTodos();
     }
 

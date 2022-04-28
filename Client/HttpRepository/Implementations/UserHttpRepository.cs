@@ -18,14 +18,22 @@ public class UserHttpRepository : IUserHttpRepository
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
-    public async Task CreateUser(ClientPrincipalDto clientPrincipalDto)
+    public async Task<UserDto?> CreateUser(ClientPrincipalDto clientPrincipalDto)
     {
         if (clientPrincipalDto is null)
         {
             throw new ArgumentNullException(nameof(clientPrincipalDto));
         }
 
-        await _httpClient.PostAsJsonAsync("api/users", clientPrincipalDto);
+        var result = await _httpClient.PostAsJsonAsync("api/users", clientPrincipalDto);
+        if (result.IsSuccessStatusCode && result.StatusCode == System.Net.HttpStatusCode.Created && result.Content is not null)
+        {
+            return await result.Content.ReadFromJsonAsync<UserDto>();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public async Task<UserDto?> GetUser(string userId)

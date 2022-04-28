@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SharedLibrary.Dtos;
-using System.Text.Json;
 
 namespace Client.Shared;
 
@@ -13,6 +12,9 @@ public partial class MainLayout
 
     [Inject]
     public IUserHttpRepository? UserHttpRepository { get; set; }
+
+    [Inject]
+    public ISnackbar? SnackbarService { get; set; }
 
     public IdentityDto? IdentityDto { get; set; }
     private bool _isAuthenticated;
@@ -43,10 +45,10 @@ public partial class MainLayout
                     break;
             }
 
-            var user = await UserHttpRepository!.GetUser(IdentityDto!.ClientPrincipal.UserId);
-            if (user is null)
+            var result = await UserHttpRepository!.CreateUser(IdentityDto.ClientPrincipal);
+            if (result is not null)
             {
-                await UserHttpRepository!.CreateUser(IdentityDto.ClientPrincipal);
+                SnackbarService!.Add($"New user '{IdentityDto.ClientPrincipal.UserDetails}' created", Severity.Success);
             }
         }
     }

@@ -24,12 +24,12 @@ public class TodoApi
 
     public TodoApi(ITodoRepository todoRepository, ILogger<TodoApi> logger, IMapper mapper)
     {
-        _todoRepository = todoRepository ?? throw new ArgumentNullException(nameof(todoRepository));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _todoRepository = todoRepository;
+        _logger = logger;
+        _mapper = mapper;
     }
 
-    [FunctionName("ResetDb")]
+    [FunctionName(nameof(ResetDb))]
     public async Task<IActionResult> ResetDb([HttpTrigger(AuthorizationLevel.Function, "post", Route = "resetDb")] HttpRequest req)
     {
         _logger.LogInformation("Reset Db with fake data.");
@@ -44,7 +44,7 @@ public class TodoApi
         return new OkResult();
     }
 
-    [FunctionName("GetAllTodos")]
+    [FunctionName(nameof(GetTodos))]
     public async Task<IActionResult> GetTodos([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos")] HttpRequest req)
     {
         var queryParams = req.QueryString;
@@ -60,21 +60,28 @@ public class TodoApi
         var todos = new List<Todo>();
 
         bool onlyUncompleted = Convert.ToBoolean(getOnlyUncompleted);
-
-        if (onlyUncompleted)
+        try
         {
-            todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId, getOnlyUncompleted: true)).ToList();
+            if (onlyUncompleted)
+            {
+                todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId, getOnlyUncompleted: true)).ToList();
+            }
+            else
+            {
+                todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId)).ToList();
+            }
         }
-        else
+        catch (UserNotFoundException)
         {
-            todos = (await _todoRepository.GetByQueryAsync(clientPrincipal.UserId)).ToList();
+            _logger.LogError($"User {clientPrincipal.UserId} not found. Return empty list.");
+            return new OkObjectResult(new List<TodoDto>());
         }
 
         var todosDto = _mapper.Map<IEnumerable<TodoDto>>(todos);
         return new OkObjectResult(todosDto);
     }
 
-    [FunctionName("GetTodoById")]
+    [FunctionName(nameof(GetTodoById))]
     public async Task<IActionResult> GetTodoById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "todos/{todoId}")] HttpRequest req, string todoId)
     {
         _logger.LogInformation($"New request for {nameof(GetTodoById)} with id [{todoId}].");
@@ -96,7 +103,7 @@ public class TodoApi
         return new OkObjectResult(_mapper.Map<TodoDto>(todo));
     }
 
-    [FunctionName("AddTodo")]
+    [FunctionName(nameof(AddTodo))]
     public async Task<IActionResult> AddTodo([HttpTrigger(AuthorizationLevel.Function, "post", Route = "todos")] HttpRequest req)
     {
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -159,7 +166,7 @@ public class TodoApi
         return new CreatedAtRouteResult(new { todoId = todoToAdd.Id }, todoToAdd);
     }
 
-    [FunctionName("UpdateTodo")]
+    [FunctionName(nameof(UpdateTodo))]
     public async Task<IActionResult> UpdateTodo([HttpTrigger(AuthorizationLevel.Function, "put", Route = "todos/{todoId}")] HttpRequest req, string todoId)
     {
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -223,7 +230,7 @@ public class TodoApi
         return new NoContentResult();
     }
 
-    [FunctionName("CompleteTodo")]
+    [FunctionName(nameof(CompleteTodo))]
     public async Task<IActionResult> CompleteTodo([HttpTrigger(AuthorizationLevel.Function, "post", Route = "todos/{todoId}/complete")] HttpRequest req, string todoId)
     {
         var clientPrincipal = HttpRequestParser.ParseToClientPrincipal(req);
@@ -256,7 +263,7 @@ public class TodoApi
         return new OkResult();
     }
 
-    [FunctionName("DeleteTodo")]
+    [FunctionName(nameof(DeleteTodo))]
     public async Task<IActionResult> DeleteTodo([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "todos/{todoId}")] HttpRequest req, string todoId)
     {
         _logger.LogInformation($"New request for {nameof(DeleteTodo)} with id [{todoId}].");

@@ -20,7 +20,7 @@ function Start-Fe {
 }
 
 function Start-Be {
-	func host start --script-root $ProjectPath\Api\
+	func host start --script-root $ProjectPath\Api\ --verbose
 }
 
 function Start-Swa {
