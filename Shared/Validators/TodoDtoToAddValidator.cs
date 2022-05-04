@@ -2,7 +2,7 @@
 using SharedLibrary;
 using SharedLibrary.Dtos;
 
-namespace Api.Validators;
+namespace SharedLibrary.Validators;
 
 public class TodoDtoToAddValidator : AbstractValidator<TodoDtoToAdd>
 {

@@ -7,10 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Validation\" />
+    <Compile Remove="Validation\**" />
+    <EmbeddedResource Remove="Validation\**" />
+    <None Remove="Validation\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Authentication.WebAssembly" Version="1.0.1-preview" />
   </ItemGroup>
 

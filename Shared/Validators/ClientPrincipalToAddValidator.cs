@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using SharedLibrary.Dtos;
 
-namespace Api.Validators;
+namespace SharedLibrary.Validators;
 
 public class ClientPrincipalToAddValidator : AbstractValidator<ClientPrincipalDto>
 {

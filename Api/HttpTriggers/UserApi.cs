@@ -1,6 +1,5 @@
 ﻿using Api.Models;
 using Api.Repositories.Interfaces;
-using Api.Validators;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using SharedLibrary.Dtos;
+using SharedLibrary.Validators;
 using System.Text.Json;
 
 namespace Api.HttpTriggers;

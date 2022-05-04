@@ -8,11 +8,11 @@ using Api.Models;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using System.Net;
-using Api.Validators;
 using SharedLibrary.Dtos;
 using Api.Repositories.Interfaces;
 using Api.Utilities;
 using Api.Exceptions;
+using SharedLibrary.Validators;
 
 namespace Api.HttpTriggers;
 
