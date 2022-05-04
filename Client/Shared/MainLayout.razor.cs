@@ -48,7 +48,7 @@ public partial class MainLayout
             var result = await UserHttpRepository!.CreateUser(IdentityDto.ClientPrincipal);
             if (result is not null)
             {
-                SnackbarService!.Add($"New user '{IdentityDto.ClientPrincipal.UserDetails}' created", Severity.Success, config => { config.Icon = _icon; });
+                SnackbarService!.Add($"<h1>Welcome!</h1><h2>New user <strong>'{IdentityDto.ClientPrincipal.UserDetails}'</strong> has been created</h2>", Severity.Success, config => { config.Icon = _icon; });
             }
         }
     }
