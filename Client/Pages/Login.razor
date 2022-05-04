@@ -2,17 +2,17 @@
 
 @attribute [AllowAnonymous]
 <PageTitle>Todo List - Login</PageTitle>
-<MudContainer Class="mt-10 mb-10">
-    <MudGrid>
+<MudContainer Class="mt-10 mb-10" MaxWidth="MaxWidth.Small">
+    <MudGrid >
         <MudItem xs="12">
             <MudCard Elevation="3" >
                 <MudCardHeader>
                     <CardHeaderContent>
                         <MudGrid>
-                            <MudItem md="1" >
+                            <MudItem md="2" >
                                 <MudIcon Icon="@Icons.TwoTone.Login" Style="font-size: 4rem;" Color="Color.Primary"/> 
                             </MudItem>
-                            <MudItem md="11" >
+                            <MudItem md="10" >
                                 <MudText Align="Align.Start" Typo="Typo.h3" Color="Color.Primary">Login</MudText>
                             </MudItem>
                         </MudGrid>
@@ -21,14 +21,14 @@
                 <MudDivider DividerType="DividerType.Middle" />
                 <MudCardContent>
                     <MudGrid>
-                        <MudItem>
-                            <MudButton Link="/.auth/login/github" StartIcon="@Icons.Custom.Brands.GitHub" Variant="Variant.Filled" Color="Color.Transparent" Size="Size.Large">Login with GitHub</MudButton>
+                        <MudItem xs="12">
+                            <MudButton Link="/.auth/login/github" FullWidth="true" StartIcon="@Icons.Custom.Brands.GitHub" Variant="Variant.Filled" Color="Color.Transparent" Size="Size.Large">Login with GitHub</MudButton>
                         </MudItem>
-                        <MudItem>
-                            <MudButton Link="/.auth/login/aad" StartIcon="@Icons.Custom.Brands.Microsoft" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Microsoft</MudButton>
+                        <MudItem xs="12">
+                            <MudButton Link="/.auth/login/aad" FullWidth="true" StartIcon="@Icons.Custom.Brands.Microsoft" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Microsoft</MudButton>
                         </MudItem>
-                        <MudItem>
-                            <MudButton Link="/.auth/login/twitter" StartIcon="@Icons.Custom.Brands.Twitter" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Twitter</MudButton>
+                        <MudItem xs="12">
+                            <MudButton Link="/.auth/login/twitter" FullWidth="true" StartIcon="@Icons.Custom.Brands.Twitter" Variant="Variant.Filled" Color="Color.Info" Size="Size.Large">Login with Twitter</MudButton>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
