@@ -1,12 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudThemeProvider @bind-IsDarkMode=@_isDarkMode Theme=_theme/>
 <MudDialogProvider CloseOnEscapeKey="true" FullWidth="true"/>
 <MudSnackbarProvider/>
 
 <MudLayout>
     <MudAppBar Elevation="3">
         <MudText Typo="Typo.h5" Color="Color.Inherit">Blazor - Todo List</MudText>
+        <MudSwitch ThumbIcon="@(_isDarkMode ==false ? @Icons.Material.Filled.DarkMode: @Icons.Material.Filled.LightMode)" ThumbIconColor="@Color.Primary" Class="ml-1" @bind-Checked="@_isDarkMode" Color="Color.Default" T="bool"/>
         <MudSpacer />
         @if (_isAuthenticated)
         {

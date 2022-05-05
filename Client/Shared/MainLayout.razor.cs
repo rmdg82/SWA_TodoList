@@ -20,6 +20,9 @@ public partial class MainLayout
     private bool _isAuthenticated;
     private string _icon = Icons.TwoTone.Person;
 
+    private bool _isDarkMode = false;
+    private MudTheme _theme = new();
+
     protected override async Task OnInitializedAsync()
     {
         IdentityDto = await AuthHttpRepository!.GetIdentity();
