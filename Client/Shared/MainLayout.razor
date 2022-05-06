@@ -14,7 +14,7 @@
             <MudIconButton Icon="@_icon" Color="Color.Inherit"></MudIconButton>
             <MudText Typo="Typo.h5" Color="Color.Inherit">@(IdentityDto?.ClientPrincipal?.UserDetails)</MudText>
             <MudTooltip Text="Logout">
-                <MudIconButton Link="/.auth/logout" Icon="@Icons.Material.TwoTone.Logout" Color="Color.Inherit"></MudIconButton>
+                <MudIconButton Link="@AuthEndpoint.Logout" Icon="@Icons.Material.TwoTone.Logout" Color="Color.Inherit"></MudIconButton>
             </MudTooltip>
         }
         else
