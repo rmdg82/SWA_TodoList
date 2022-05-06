@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using SharedLibrary;
 using SharedLibrary.Dtos;
 
 namespace SharedLibrary.Validators;

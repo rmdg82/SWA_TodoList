@@ -1,6 +1,5 @@
 ﻿using Api.Models;
 using AutoMapper;
-using System;
 using SharedLibrary.Dtos;
 
 namespace Api.MappingProfiles;

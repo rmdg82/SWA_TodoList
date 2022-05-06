@@ -1,18 +1,16 @@
+using Api.Exceptions;
+using Api.Models;
+using Api.Repositories.Interfaces;
+using Api.Utilities;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using AutoMapper;
-using Api.Models;
-using System.Text.Json;
-using Microsoft.Azure.Cosmos;
-using System.Net;
 using SharedLibrary.Dtos;
-using Api.Repositories.Interfaces;
-using Api.Utilities;
-using Api.Exceptions;
 using SharedLibrary.Validators;
+using System.Text.Json;
 
 namespace Api.HttpTriggers;
 

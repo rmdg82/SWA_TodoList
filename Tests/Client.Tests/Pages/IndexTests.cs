@@ -1,8 +1,8 @@
-﻿using Xunit;
-using Moq;
+﻿using Client.HttpRepository.Interfaces;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Moq;
 using MudBlazor;
-using Client.HttpRepository.Interfaces;
+using Xunit;
 
 namespace Client.Tests.Pages;
 

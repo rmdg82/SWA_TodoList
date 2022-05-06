@@ -1,15 +1,11 @@
+using Api.Repositories.Interfaces;
+using Api.Utilities;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using AutoMapper;
-using System.Text.Json;
-using System.Text;
-using Api.Repositories.Interfaces;
-using System.Security.Claims;
-using Api.Models;
-using Api.Utilities;
 
 namespace Api.HttpTriggers;
 

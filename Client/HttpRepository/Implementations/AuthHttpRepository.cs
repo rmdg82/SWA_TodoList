@@ -1,4 +1,5 @@
-﻿using Client.HttpRepository.Interfaces;
+﻿using Client.Constants;
+using Client.HttpRepository.Interfaces;
 using SharedLibrary.Dtos;
 using System.Net.Http.Json;
 
@@ -7,7 +8,6 @@ namespace Client.HttpRepository.Implementations;
 public class AuthHttpRepository : IAuthHttpRepository
 {
     private readonly HttpClient _httpClient;
-    public string[] Providers { get; } = { "aad", "github", "twitter" };
 
     public AuthHttpRepository(HttpClient httpClient)
     {
@@ -18,7 +18,7 @@ public class AuthHttpRepository : IAuthHttpRepository
     {
         try
         {
-            return await _httpClient.GetFromJsonAsync<IdentityDto>("/.auth/me");
+            return await _httpClient.GetFromJsonAsync<IdentityDto>(AuthEndpoint.Me);
         }
         catch (Exception)
         {

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using SharedLibrary;
 using SharedLibrary.Dtos;
-using System.Text.Json;
 
 namespace Client.Pages;
 
