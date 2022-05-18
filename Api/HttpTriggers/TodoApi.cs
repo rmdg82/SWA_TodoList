@@ -107,7 +107,7 @@ public class TodoApi
             if (todo is null)
             {
                 _logger.LogError($"Not found todo for {nameof(GetTodoById)} with id [{todoId}].");
-                return new NotFoundResult();
+                return new NotFoundObjectResult($"Not found todo for {nameof(GetTodoById)} with id [{todoId}].");
             }
 
             return new OkObjectResult(_mapper.Map<TodoDto>(todo));

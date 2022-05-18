@@ -315,7 +315,7 @@ public class TodoApiTests
 
         var result = (await _webApi.GetTodoById(request, _notExistingUserId));
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
     }
 
     [Fact]
@@ -391,7 +391,7 @@ public class TodoApiTests
 
         var result = await _webApi.AddTodo(request);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.AddAsync(_notExistingUserId, It.IsAny<Todo>()), Times.Once());
     }
 
@@ -482,7 +482,7 @@ public class TodoApiTests
 
         var result = await _webApi.UpdateTodo(request, _existingTodoId);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.UpdateAsync(_notExistingUserId, _existingTodoId, _todoTextNotTooLong), Times.Once());
     }
 
@@ -496,7 +496,7 @@ public class TodoApiTests
 
         var result = await _webApi.UpdateTodo(request, _notExistingTodoId);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.UpdateAsync(_existingUserId, _notExistingTodoId, _todoTextNotTooLong), Times.Once());
     }
 
@@ -545,7 +545,7 @@ public class TodoApiTests
 
         var result = await _webApi.CompleteTodo(request, _existingTodoId);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.CompleteAsync(_notExistingUserId, _existingTodoId), Times.Once());
     }
 
@@ -557,7 +557,7 @@ public class TodoApiTests
 
         var result = await _webApi.CompleteTodo(request, _notExistingTodoId);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.CompleteAsync(_existingUserId, _notExistingTodoId), Times.Once());
     }
 
@@ -593,7 +593,7 @@ public class TodoApiTests
 
         var result = await _webApi.DeleteTodo(request, _existingTodoId);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.DeleteAsync(_notExistingUserId, _existingTodoId), Times.Once());
     }
 
@@ -605,7 +605,7 @@ public class TodoApiTests
 
         var result = await _webApi.DeleteTodo(request, _notExistingTodoId);
 
-        result.Should().NotBeNull().And.BeOfType<NotFoundResult>();
+        result.Should().NotBeNull().And.BeOfType<NotFoundObjectResult>();
         _mockedTodoRepository.Verify(x => x.DeleteAsync(_existingUserId, _notExistingTodoId), Times.Once());
     }
 
