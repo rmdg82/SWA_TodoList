@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{36325981-242
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FEF9BEB3-2394-4280-A23A-11DC1722EE16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPrincipalSerializer", "Tests\ClientPrincipalSerializer\ClientPrincipalSerializer.csproj", "{7017BAF5-3912-40CB-999A-61FC0CEB77A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{2AEA0FE9-AE13-4780-9993-D0BC27D5928B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AEA0FE9-AE13-4780-9993-D0BC27D5928B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AEA0FE9-AE13-4780-9993-D0BC27D5928B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7017BAF5-3912-40CB-999A-61FC0CEB77A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7017BAF5-3912-40CB-999A-61FC0CEB77A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7017BAF5-3912-40CB-999A-61FC0CEB77A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7017BAF5-3912-40CB-999A-61FC0CEB77A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{07221F74-6CE3-4DB7-AF23-2F2FF6A9A7EB} = {7794C05C-904E-4B2F-86BF-F4AF62485E51}
 		{E5C41375-2F37-4A9D-8168-34D86378395E} = {FEF9BEB3-2394-4280-A23A-11DC1722EE16}
 		{2AEA0FE9-AE13-4780-9993-D0BC27D5928B} = {FEF9BEB3-2394-4280-A23A-11DC1722EE16}
+		{7017BAF5-3912-40CB-999A-61FC0CEB77A0} = {FEF9BEB3-2394-4280-A23A-11DC1722EE16}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {728C121B-9F41-4FD4-B864-CBB919B0E470}

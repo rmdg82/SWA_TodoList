@@ -24,30 +24,6 @@ public class MongoUserRepository : IUserRepository
         _userCollection = database.GetCollection<User>(collectionId);
     }
 
-    public async Task<User?> CreateIfNotExists(ClientPrincipal clientPrincipal)
-    {
-        if (clientPrincipal is null)
-        {
-            throw new ArgumentNullException(nameof(clientPrincipal));
-        }
-
-        var user = new User
-        {
-            Id = clientPrincipal.UserId,
-            ClientPrincipal = clientPrincipal,
-            Todos = new List<Todo>()
-        };
-
-        var result = await _userCollection.ReplaceOneAsync(
-            filter: u => u.Id == clientPrincipal.UserId,
-            replacement: user,
-            options: new ReplaceOptions { IsUpsert = true });
-
-        var hasModifiedTheDb = result.IsModifiedCountAvailable && result.ModifiedCount == 1;
-
-        return hasModifiedTheDb ? user : null;
-    }
-
     public async Task<User?> CreateUser(ClientPrincipal clientPrincipal)
     {
         if (clientPrincipal is null)

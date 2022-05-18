@@ -1,6 +1,8 @@
-﻿using Api.Models;
+﻿using Api.Exceptions;
+using Api.Models;
 using Api.Repositories.Interfaces;
 using Microsoft.Azure.Cosmos;
+using System.Net;
 
 namespace Api.Repositories.Implementations;
 
@@ -46,174 +48,298 @@ public class CosmosTodoRepository : ITodoRepository
 
     public CosmosTodoRepository(CosmosClient cosmosClient, string databaseId, string containerId)
     {
+        if (string.IsNullOrEmpty(databaseId))
+        {
+            throw new ArgumentException($"'{nameof(databaseId)}' cannot be null or empty.", nameof(databaseId));
+        }
+
+        if (string.IsNullOrEmpty(containerId))
+        {
+            throw new ArgumentException($"'{nameof(containerId)}' cannot be null or empty.", nameof(containerId));
+        }
+
         _container = cosmosClient.GetContainer(databaseId, containerId);
     }
 
-    public async Task AddAsync(Todo todo)
+    public async Task AddAsync(string userId, Todo todo)
     {
-        await _container.CreateItemAsync(todo, new PartitionKey(todo.Id));
-    }
-
-    public Task AddAsync(string userId, Todo todo)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task CompleteAsync(string todoId)
-    {
-        if (string.IsNullOrWhiteSpace(todoId))
+        if (userId is null)
         {
-            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            throw new ArgumentNullException(nameof(userId));
         }
 
-        var todo = await GetByIdAsync(todoId);
         if (todo is null)
         {
-            throw new Exception($"Element with id [{todoId}] not found.");
+            throw new ArgumentNullException(nameof(todo));
         }
 
-        if (todo.IsCompleted)
-        {
-            throw new Exception($"Element with id [{todoId}] is already completed.");
-        }
-
-        todo.IsCompleted = true;
-        todo.CompletedAt = DateTime.UtcNow;
-
-        await _container.UpsertItemAsync(todo, new PartitionKey(todoId));
-    }
-
-    public Task CompleteAsync(string userId, string todoId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task DeleteAsync(string todoId)
-    {
-        await _container.DeleteItemAsync<Todo>(todoId, new PartitionKey(todoId));
-    }
-
-    public Task DeleteAsync(string userId, string todoId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Todo> GetByIdAsync(string todoId)
-    {
         try
         {
-            var response = await _container.ReadItemAsync<Todo>(todoId, new PartitionKey(todoId));
-            return response.Resource;
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                userFromDb.Todos.Add(todo);
+                await _container.UpsertItemAsync(userFromDb, new PartitionKey(userId));
+            }
         }
-        catch (Exception)
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
+    }
+
+    public async Task CompleteAsync(string userId, string todoId)
+    {
+        if (userId is null)
+        {
+            throw new ArgumentNullException(nameof(userId));
+        }
+
+        if (todoId is null)
+        {
+            throw new ArgumentNullException(nameof(todoId));
+        }
+
+        try
+        {
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                var todo = userFromDb.Todos.FirstOrDefault(x => x.Id == todoId);
+                if (todo is null)
+                {
+                    throw new TodoNotFoundException($"Todo {todoId} not found.");
+                }
+
+                todo.IsCompleted = true;
+                todo.CompletedAt = DateTime.UtcNow;
+
+                await _container.UpsertItemAsync(userFromDb, new PartitionKey(userId));
+            }
+        }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
+    }
+
+    public async Task DeleteAsync(string userId, string todoId)
+    {
+        if (userId is null)
+        {
+            throw new ArgumentNullException(nameof(userId));
+        }
+
+        if (todoId is null)
+        {
+            throw new ArgumentNullException(nameof(todoId));
+        }
+
+        try
+        {
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                var todo = userFromDb.Todos.FirstOrDefault(x => x.Id == todoId);
+                if (todo is null)
+                {
+                    throw new TodoNotFoundException($"Todo {todoId} not found.");
+                }
+
+                userFromDb.Todos.Remove(todo);
+                await _container.UpsertItemAsync(userFromDb, new PartitionKey(userId));
+            }
+        }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
+    }
+
+    public async Task<Todo?> GetByIdAsync(string userId, string todoId)
+    {
+        if (userId is null)
+        {
+            throw new ArgumentNullException(nameof(userId));
+        }
+
+        if (todoId is null)
+        {
+            throw new ArgumentNullException(nameof(todoId));
+        }
+
+        try
+        {
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                var todo = userFromDb.Todos.FirstOrDefault(x => x.Id == todoId);
+                if (todo is null)
+                {
+                    throw new TodoNotFoundException($"Todo {todoId} not found.");
+                }
+
+                return userFromDb.Todos?.FirstOrDefault(x => x.Id == todoId);
+            }
+
             return null;
         }
-    }
-
-    public Task<Todo> GetByIdAsync(string userId, string todoId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<Todo>> GetByQueryAsync(string sqlQuery)
-    {
-        var query = _container.GetItemQueryIterator<Todo>(new QueryDefinition(sqlQuery));
-
-        var result = new List<Todo>();
-        while (query.HasMoreResults)
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            var response = await query.ReadNextAsync();
-            result.AddRange(response.ToList());
-        }
-
-        return result;
-    }
-
-    public Task<IEnumerable<Todo>> GetByQueryAsync(bool getOnlyUncompleted = false)
-    {
-        if (getOnlyUncompleted)
-        {
-            return GetByQueryAsync("SELECT * FROM c WHERE c.isCompleted=false");
-        }
-        else
-        {
-            return GetByQueryAsync("SELECT * FROM c");
+            throw new UserNotFoundException($"User {userId} not found.");
         }
     }
 
-    public Task<IEnumerable<Todo>> GetByQueryAsync(string userId, string sqlQuery)
+    public async Task<IEnumerable<Todo>> GetByQueryAsync(string userId, bool getOnlyUncompleted = false)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Todo>> GetByQueryAsync(string userId, bool getOnlyUncompleted = false)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> InitializeDbDataIfEmpty()
-    {
-        var todos = await GetByQueryAsync("SELECT * FROM c");
-
-        if (todos is null || !todos.Any())
+        if (userId is null)
         {
-            foreach (var todo in _fakeTodos)
+            throw new ArgumentNullException(nameof(userId));
+        }
+
+        try
+        {
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
             {
-                await AddAsync(todo);
+                throw new UserNotFoundException($"User {userId} not found.");
             }
-            return true;
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                return getOnlyUncompleted
+                    ? userFromDb.Todos.Where(x => !x.IsCompleted)
+                    : userFromDb.Todos;
+            }
+
+            return Enumerable.Empty<Todo>();
         }
-
-        return false;
-    }
-
-    public Task<bool> InitializeDbDataIfEmpty(string userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task ResetDb()
-    {
-        var allTodos = await GetByQueryAsync("SELECT * FROM c");
-
-        foreach (var item in allTodos)
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            await _container.DeleteItemAsync<Todo>(item.Id, new PartitionKey(item.Id));
-        }
-
-        foreach (var todo in _fakeTodos)
-        {
-            await AddAsync(todo);
+            throw new UserNotFoundException($"User {userId} not found.");
         }
     }
 
-    public Task ResetDb(string userId)
+    public async Task<bool> InitializeDbDataIfEmpty(string userId)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task UpdateAsync(string todoId, string todoTextToUpdate)
-    {
-        if (string.IsNullOrWhiteSpace(todoId))
+        if (userId is null)
         {
-            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or whitespace.", nameof(todoId));
+            throw new ArgumentNullException(nameof(userId));
         }
 
-        var todo = await GetByIdAsync(todoId);
-
-        if (todo is null)
+        try
         {
-            throw new KeyNotFoundException($"Element with id [{todoId}] not found.");
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null && !userFromDb.Todos.Any())
+            {
+                userFromDb.Todos = _fakeTodos;
+                await _container.UpsertItemAsync(userFromDb, new PartitionKey(userId));
+            }
+
+            return false;
         }
-
-        todo.Text = todoTextToUpdate;
-
-        await _container.UpsertItemAsync(todo, new PartitionKey(todoId));
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
     }
 
-    public Task UpdateAsync(string userId, string todoId, string todoTextToUpdate)
+    public async Task ResetDb(string userId)
     {
-        throw new NotImplementedException();
+        if (userId is null)
+        {
+            throw new ArgumentNullException(nameof(userId));
+        }
+
+        try
+        {
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                userFromDb.Todos = _fakeTodos;
+                await _container.UpsertItemAsync(userFromDb, new PartitionKey(userId));
+            }
+        }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
+    }
+
+    public async Task UpdateAsync(string userId, string todoId, string todoTextToUpdate)
+    {
+        if (userId is null)
+        {
+            throw new ArgumentNullException(nameof(userId));
+        }
+
+        if (todoId is null)
+        {
+            throw new ArgumentNullException(nameof(todoId));
+        }
+
+        if (todoTextToUpdate is null)
+        {
+            throw new ArgumentNullException(nameof(todoTextToUpdate));
+        }
+
+        try
+        {
+            var responseUserFromDb = await _container.ReadItemAsync<Models.User>(userId, new PartitionKey(userId));
+            if (responseUserFromDb.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new UserNotFoundException($"User {userId} not found.");
+            }
+
+            var userFromDb = responseUserFromDb.Resource;
+            if (userFromDb is not null)
+            {
+                var todo = userFromDb.Todos.FirstOrDefault(x => x.Id == todoId);
+                todo.Text = todoTextToUpdate;
+                await _container.UpsertItemAsync(userFromDb, new PartitionKey(userId));
+            }
+        }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new UserNotFoundException($"User {userId} not found.");
+        }
     }
 }

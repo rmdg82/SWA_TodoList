@@ -115,14 +115,14 @@ public class MongoTodoRepository : ITodoRepository
 
     public async Task DeleteAsync(string userId, string todoId)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (userId is null)
         {
-            throw new ArgumentException($"'{nameof(userId)}' cannot be null or empty.", nameof(userId));
+            throw new ArgumentNullException(nameof(userId));
         }
 
-        if (string.IsNullOrEmpty(todoId))
+        if (todoId is null)
         {
-            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or empty.", nameof(todoId));
+            throw new ArgumentNullException(nameof(todoId));
         }
 
         var user = _userCollection.Find(u => u.Id == userId).FirstOrDefault();
@@ -160,7 +160,7 @@ public class MongoTodoRepository : ITodoRepository
             throw new UserNotFoundException($"User {userId} not found.");
         }
 
-        return user?.Todos.FirstOrDefault(t => t.Id == todoId);
+        return user.Todos?.FirstOrDefault(t => t.Id == todoId);
     }
 
     public async Task<IEnumerable<Todo>> GetByQueryAsync(string userId, bool getOnlyUncompleted = false)
@@ -176,11 +176,18 @@ public class MongoTodoRepository : ITodoRepository
             throw new UserNotFoundException($"User {userId} not found.");
         }
 
-        return getOnlyUncompleted ? user.Todos.Where(t => t.IsCompleted == true) : user.Todos;
+        return getOnlyUncompleted
+            ? user.Todos.Where(t => !t.IsCompleted)
+            : user.Todos;
     }
 
     public async Task<bool> InitializeDbDataIfEmpty(string userId)
     {
+        if (userId is null)
+        {
+            throw new ArgumentNullException(nameof(userId));
+        }
+
         var user = await _userCollection.Find(x => x.Id == userId).FirstOrDefaultAsync();
         if (user is null)
         {
@@ -200,9 +207,9 @@ public class MongoTodoRepository : ITodoRepository
 
     public async Task ResetDb(string userId)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (userId is null)
         {
-            throw new ArgumentException($"'{nameof(userId)}' cannot be null or empty.", nameof(userId));
+            throw new ArgumentNullException(nameof(userId));
         }
 
         var user = await _userCollection.Find(x => x.Id == userId).FirstOrDefaultAsync();
@@ -217,14 +224,14 @@ public class MongoTodoRepository : ITodoRepository
 
     public async Task UpdateAsync(string userId, string todoId, string todoTextToUpdate)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (userId is null)
         {
-            throw new ArgumentException($"'{nameof(userId)}' cannot be null or empty.", nameof(userId));
+            throw new ArgumentNullException(nameof(userId));
         }
 
-        if (string.IsNullOrEmpty(todoId))
+        if (todoId is null)
         {
-            throw new ArgumentException($"'{nameof(todoId)}' cannot be null or empty.", nameof(todoId));
+            throw new ArgumentNullException(nameof(todoId));
         }
 
         if (todoTextToUpdate is null)

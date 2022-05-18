@@ -37,9 +37,21 @@ public class TodoApi
         {
             return new UnauthorizedResult();
         }
-
-        await _todoRepository.ResetDb(clientPrincipal.UserId);
-        return new OkResult();
+        try
+        {
+            await _todoRepository.ResetDb(clientPrincipal.UserId);
+            return new OkResult();
+        }
+        catch (UserNotFoundException ex)
+        {
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return new BadRequestResult();
+        }
     }
 
     [FunctionName(nameof(GetTodos))]
@@ -89,16 +101,32 @@ public class TodoApi
         {
             return new UnauthorizedResult();
         }
-
-        var todo = await _todoRepository.GetByIdAsync(clientPrincipal.UserId, todoId);
-
-        if (todo is null)
+        try
         {
-            _logger.LogError($"Not found todo for {nameof(GetTodoById)} with id [{todoId}].");
-            return new NotFoundResult();
-        }
+            var todo = await _todoRepository.GetByIdAsync(clientPrincipal.UserId, todoId);
+            if (todo is null)
+            {
+                _logger.LogError($"Not found todo for {nameof(GetTodoById)} with id [{todoId}].");
+                return new NotFoundResult();
+            }
 
-        return new OkObjectResult(_mapper.Map<TodoDto>(todo));
+            return new OkObjectResult(_mapper.Map<TodoDto>(todo));
+        }
+        catch (UserNotFoundException ex)
+        {
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
+        }
+        catch (TodoNotFoundException ex)
+        {
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return new BadRequestResult();
+        }
     }
 
     [FunctionName(nameof(AddTodo))]
@@ -149,14 +177,14 @@ public class TodoApi
         {
             await _todoRepository.AddAsync(clientPrincipal.UserId, todoToAdd);
         }
-        catch (UserNotFoundException)
+        catch (UserNotFoundException ex)
         {
-            _logger.LogError($"User {clientPrincipal.UserId} not found.");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
+            _logger.LogError(ex.Message);
             return new BadRequestResult();
         }
 
@@ -209,15 +237,15 @@ public class TodoApi
         {
             await _todoRepository.UpdateAsync(clientPrincipal.UserId, todoId, todoToUpdateDto.Text);
         }
-        catch (UserNotFoundException)
+        catch (UserNotFoundException ex)
         {
-            _logger.LogError($"User {clientPrincipal.UserId} not found.");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
-        catch (TodoNotFoundException)
+        catch (TodoNotFoundException ex)
         {
-            _logger.LogError($"Todo with id {todoId} not found.");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
         catch (Exception ex)
         {
@@ -242,15 +270,15 @@ public class TodoApi
             _logger.LogInformation($"Request complete todo with id [{todoId}]");
             await _todoRepository.CompleteAsync(clientPrincipal.UserId, todoId);
         }
-        catch (UserNotFoundException)
+        catch (UserNotFoundException ex)
         {
-            _logger.LogError($"User {clientPrincipal.UserId} not found.");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
-        catch (TodoNotFoundException)
+        catch (TodoNotFoundException ex)
         {
-            _logger.LogError($"Todo with id {todoId} not found.");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
         catch (Exception ex)
         {
@@ -278,13 +306,13 @@ public class TodoApi
         }
         catch (UserNotFoundException ex)
         {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
         catch (TodoNotFoundException ex)
         {
-            _logger.LogError($"Catched exception: [{ex.Message}]");
-            return new NotFoundResult();
+            _logger.LogError(ex.Message);
+            return new NotFoundObjectResult(ex.Message);
         }
         catch (Exception ex)
         {

@@ -27,16 +27,23 @@ public class Startup : FunctionsStartup
             options.Converters.Add(new JsonStringEnumConverter());
         });
 
-        //builder.Services.AddSingleton<ITodoRepository>(InitializeCosmosClientInstanceAsync().GetAwaiter().GetResult());
-        builder.Services.AddSingleton<ITodoRepository>(InitializeMongoTodoRepositoryAsync());
-        builder.Services.AddSingleton<IUserRepository>(InitializeMongoUserRepositoryAsync());
+        builder.Services.AddSingleton<ITodoRepository>(InitializeCosmosTodoRepository().GetAwaiter().GetResult());
+        builder.Services.AddSingleton<IUserRepository>(InitializeCosmosUserRepository().GetAwaiter().GetResult());
+        //builder.Services.AddSingleton<ITodoRepository>(InitializeMongoTodoRepository());
+        //builder.Services.AddSingleton<IUserRepository>(InitializeMongoUserRepository());
     }
 
-    private static async Task<CosmosTodoRepository> InitializeCosmosClientInstanceAsync()
+    private static async Task<CosmosUserRepository> InitializeCosmosUserRepository()
     {
-        string connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
-        string databaseId = Environment.GetEnvironmentVariable("DatabaseId");
-        string containerId = Environment.GetEnvironmentVariable("ContainerId");
+        string? connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
+        string? databaseId = Environment.GetEnvironmentVariable("DatabaseId");
+        string? containerId = Environment.GetEnvironmentVariable("ContainerId");
+
+        if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(containerId))
+        {
+            throw new Exception("Connection string, databaseId or containerId must be set.");
+        }
+
         CosmosClientOptions clientOptions = new()
         {
             SerializerOptions = new CosmosSerializationOptions()
@@ -46,15 +53,39 @@ public class Startup : FunctionsStartup
         };
 
         var client = new CosmosClient(connectionString, clientOptions);
-
         var database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
         await database.Database.CreateContainerIfNotExistsAsync(containerId, "/id");
-        var cosmosDbService = new CosmosTodoRepository(client, databaseId, containerId);
 
-        return cosmosDbService;
+        return new CosmosUserRepository(client, databaseId, containerId);
     }
 
-    private static MongoTodoRepository InitializeMongoTodoRepositoryAsync()
+    private static async Task<CosmosTodoRepository> InitializeCosmosTodoRepository()
+    {
+        string? connectionString = Environment.GetEnvironmentVariable("CosmosConnectionString");
+        string? databaseId = Environment.GetEnvironmentVariable("DatabaseId");
+        string? containerId = Environment.GetEnvironmentVariable("ContainerId");
+
+        if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(containerId))
+        {
+            throw new Exception("Connection string, databaseId or containerId must be set.");
+        }
+
+        CosmosClientOptions clientOptions = new()
+        {
+            SerializerOptions = new CosmosSerializationOptions()
+            {
+                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+            }
+        };
+
+        var client = new CosmosClient(connectionString, clientOptions);
+        var database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
+        await database.Database.CreateContainerIfNotExistsAsync(containerId, "/id");
+
+        return new CosmosTodoRepository(client, databaseId, containerId);
+    }
+
+    private static MongoTodoRepository InitializeMongoTodoRepository()
     {
         string? connectionString = Environment.GetEnvironmentVariable("MongoDbConnectionString");
         string? databaseId = Environment.GetEnvironmentVariable("DatabaseId");
@@ -62,7 +93,7 @@ public class Startup : FunctionsStartup
 
         if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(collectionId))
         {
-            throw new Exception("MongoDbConnectionString, DatabaseId and ContainerId must be set");
+            throw new Exception("MongoDbConnectionString, DatabaseId and ContainerId must be set.");
         }
 
         var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
@@ -75,7 +106,7 @@ public class Startup : FunctionsStartup
         return mongoDbRepository;
     }
 
-    private static MongoUserRepository InitializeMongoUserRepositoryAsync()
+    private static MongoUserRepository InitializeMongoUserRepository()
     {
         string? connectionString = Environment.GetEnvironmentVariable("MongoDbConnectionString");
         string? databaseId = Environment.GetEnvironmentVariable("DatabaseId");
