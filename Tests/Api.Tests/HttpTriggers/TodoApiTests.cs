@@ -136,6 +136,7 @@ public class TodoApiTests
     private void SetUpMockedRepository(Mock<ITodoRepository> mockedTodoRepository)
     {
         _mockedTodoRepository.Setup(x => x.ResetDb(_existingUserId)).Returns(Task.CompletedTask);
+        _mockedTodoRepository.Setup(x => x.ResetDb(_notExistingUserId)).Throws<UserNotFoundException>();
         _mockedTodoRepository.Setup(x => x.ResetDb(string.Empty)).Throws<ArgumentException>();
 
         _mockedTodoRepository.Setup(x => x.GetByQueryAsync(_existingUserId, false))
@@ -187,6 +188,19 @@ public class TodoApiTests
     }
 
     [Fact]
+    public async Task ResetDb_NotExistingUser_ReturnNotFound()
+    {
+        HttpRequest request = HttpRequestHelper.CreateHttpRequest(HttpMethods.Post);
+
+        HttpRequestHelper.InjectClientPrincipalToAuthHeader(new ClientPrincipal { UserId = _notExistingUserId }, request);
+
+        IActionResult actionResult = await _webApi.ResetDb(request);
+
+        actionResult.Should().BeOfType<NotFoundObjectResult>();
+        _mockedTodoRepository.Verify(x => x.ResetDb(_notExistingUserId), Times.Once());
+    }
+
+    [Fact]
     public async Task ResetDb_ExistingId_CallService()
     {
         HttpRequest request = HttpRequestHelper.CreateHttpRequest(HttpMethods.Post);
@@ -222,7 +236,7 @@ public class TodoApiTests
     }
 
     [Fact]
-    public async Task GetTodos_UserNotFound_ReturnEmptyListOfTodos()
+    public async Task GetTodos_NotExistingUser_ReturnEmptyListOfTodos()
     {
         HttpRequest request = HttpRequestHelper.CreateHttpRequest(HttpMethods.Get);
 
