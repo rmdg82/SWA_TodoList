@@ -48,7 +48,6 @@ public class CosmosUserRepository : IUserRepository
                 return userToCreate;
             }
 
-            await _container.ReplaceItemAsync(userToCreate, clientPrincipal.UserId, new PartitionKey(clientPrincipal.UserId));
             return null;
         }
         catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
