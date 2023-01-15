@@ -41,7 +41,7 @@ public class Startup : FunctionsStartup
 
         if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(containerId))
         {
-            throw new Exception("Connection string, databaseId or containerId must be set.");
+            throw new InvalidOperationException("Connection string, databaseId or containerId must be set.");
         }
 
         CosmosClientOptions clientOptions = new()
@@ -67,7 +67,7 @@ public class Startup : FunctionsStartup
 
         if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(containerId))
         {
-            throw new Exception("Connection string, databaseId or containerId must be set.");
+            throw new InvalidOperationException("Connection string, databaseId or containerId must be set.");
         }
 
         CosmosClientOptions clientOptions = new()
@@ -93,7 +93,7 @@ public class Startup : FunctionsStartup
 
         if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(collectionId))
         {
-            throw new Exception("MongoDbConnectionString, DatabaseId and ContainerId must be set.");
+            throw new InvalidOperationException("MongoDbConnectionString, DatabaseId and ContainerId must be set.");
         }
 
         var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
@@ -114,7 +114,7 @@ public class Startup : FunctionsStartup
 
         if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseId) || string.IsNullOrEmpty(collectionId))
         {
-            throw new Exception("MongoDbConnectionString, DatabaseId and ContainerId must be set");
+            throw new InvalidOperationException("MongoDbConnectionString, DatabaseId and ContainerId must be set");
         }
 
         var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
