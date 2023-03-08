@@ -7,13 +7,16 @@ param (
 	[Parameter(Mandatory = $true)]
 	[ValidateSet('be', 'fe', 'swa')]
 	[string]
-	$Mode
+	$Mode,
+
+	[Parameter(Mandatory = $false)]
+	[string]
+	$ProjectPath = "."
 )
 
 $FeUrl = "http://localhost:5260"
 $BeUrl = "http://localhost:7071"
 $SwaUrl = "http://localhost:4280"
-$ProjectPath = "C:\Users\esz42romdigr\source\repos\rmdg82\SWA_TodoList"
 
 function Start-Fe {
 	dotnet run watch --project $ProjectPath\Client\Client.csproj
